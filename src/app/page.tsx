@@ -1,9 +1,11 @@
 "use client";
 import { onAuthStateChanged } from "@firebase/auth";
-import Login from "./components/Login";
-import Logout from "./components/Logout";
-import { auth } from "@/utils/firebase";
+import { auth } from "@/firebase/client";
 import { useEffect, useState } from "react";
+import SignUp from "./components/auth/SignUp";
+import SignIn from "./components/auth/SignIn";
+import SignOut from "./components/auth/SignOut";
+import Example from "./components/auth/Example";
 
 export default function Home() {
   const [user, setUser] = useState(auth.currentUser);
@@ -24,7 +26,14 @@ export default function Home() {
   return (
     <>
       <h1>トップページ</h1>
-      {user ? <Logout /> : <Login />}
+      {user ? (
+        <SignOut />
+      ) : (
+        <>
+          <SignIn />
+          <SignUp />
+        </>
+      )}
       <p>{user?.displayName}</p>
       {user?.photoURL ? (
         <img src={user.photoURL} alt="ユーザーのプロフィール画像" />
