@@ -1,17 +1,23 @@
 import { useCallback, useState } from "react";
-// import { signIn } from "../../redux/operations";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { signInSuccess, signInFailure } from "@/app/redux/userSlice";
+import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/client";
-import { signInFailure, signInSuccess } from "@/app/redux/userSlice";
-import { signIn } from "@/app/redux/operations";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../firebase/client";
+import { FirebaseError } from "firebase/app";
+import {
+  isValidRequiredInput,
+  isValidEmailFormat,
+} from "../../../function/common";
 
 const SignIn = () => {
+  const isSignedIn = useAppSelector((state) => state.user.isSignedIn);
   const dispatch = useAppDispatch();
-  // const user = useAppSelector((state) => state.user);
-
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const router = useRouter(); // 非同期関数の外側で呼び出し
 
   const inputEmail = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +33,53 @@ const SignIn = () => {
     [setPassword]
   );
 
+  const handleSignIn = async () => {
+    if (!isValidRequiredInput(email, password)) {
+      alert("メールアドレスかパスワードが未入力です。");
+      return;
+    }
+
+    if (!isValidEmailFormat(email)) {
+      alert("メールアドレスの形式が不正です。");
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+      console.log(user);
+      if (!user) {
+        throw new Error("ユーザーIDを取得できません");
+      }
+
+      const userId = user.uid;
+      const userDocRef = doc(db, "users", userId);
+      const snapshot = await getDoc(userDocRef);
+      const data = snapshot.data();
+
+      if (!data) {
+        throw new Error("ユーザーデータが存在しません");
+      }
+
+      dispatch(signInSuccess()); // 非同期関数の外側で呼び出し
+      router.push("/");
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        dispatch(signInFailure(error.message)); // 非同期関数の外側で呼び出し
+        alert(error.message);
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto">
+      <h1>ようこそ、{isSignedIn || "ゲスト"}さん！</h1>
       <h2 className="text-2xl font-semibold mb-4">サインイン</h2>
 
       <div className="mb-4">
@@ -64,8 +115,7 @@ const SignIn = () => {
       <div className="mb-4">
         <button
           className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          // onClick={() => dispatch(signIn(email, password))}
-          onClick={() => dispatch(signIn(email, password))}
+          onClick={handleSignIn}
         >
           サインイン
         </button>

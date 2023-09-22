@@ -13,10 +13,8 @@ import {
 import { httpsCallable } from "firebase/functions";
 // import { signin } from "./userSlice";
 import { useAppDispatch } from "./hooks";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { signInSuccess } from "./userSlice";
-
-const usersRef = collection(db, "users");
 
 //_______________________________________//
 
@@ -27,6 +25,7 @@ export const signUp = (
   confirmPassword: string
 ) => {
   return async () => {
+    const router = useRouter();
     // const dispatch = useAppDispatch();
     // Validations
     if (!isValidRequiredInput(username, email, password, confirmPassword)) {
@@ -82,8 +81,7 @@ export const signUp = (
         //   userId: uid,
         //   username: username,
         // });
-        const router = useRouter();
-        await router.push("/");
+        router.push("/");
         // dispatch(hideLoadingAction());
         // return true;
       }
@@ -100,6 +98,7 @@ export const signUp = (
 
 export const signIn = (email: string, password: string) => {
   return async () => {
+    const router = useRouter();
     const dispatch = useAppDispatch();
     // dispatch(showLoadingAction("Sign in..."));
 
@@ -145,7 +144,6 @@ export const signIn = (email: string, password: string) => {
 
       // ログイン成功時の処理
       dispatch(signInSuccess(user));
-      const router = useRouter();
       await router.push("/");
     } catch (error) {
       // dispatch(hideLoadingAction());

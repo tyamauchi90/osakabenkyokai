@@ -2,8 +2,8 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { initialUserState } from "../type/signUpType";
 
 const userInitialState = {
-  user: null, // サインインしていない場合はnull
-  isLoading: false, // サインイン/サインアップのリクエスト中はtrue
+  isSignedIn: false, // サインインしていない場合はnull
+  isLoading: true, // サインイン/サインアップのリクエスト中はtrue
   error: null, // エラーメッセージを格納
 };
 
@@ -13,26 +13,43 @@ export const userSlice = createSlice({
   initialState: userInitialState,
   reducers: {
     // サインインアクション
-    signInSuccess: (state, action) => {
-      state.user = action.payload;
+    signedUp: (state) => {
+      state.isSignedIn = true;
       state.isLoading = false;
       state.error = null;
     },
-    // サインインエラー
+    // サインアップエラーアクション
+    signedUpFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload; // エラーが発生した場合の処理
+    },
+    // サインインアクション
+    signInSuccess: (state) => {
+      state.isSignedIn = true;
+      state.isLoading = false;
+      state.error = null;
+    },
+    // サインインエラーアクション
     signInFailure: (state, action) => {
       state.isLoading = false;
       state.error = action.payload; // エラーが発生した場合の処理
     },
     // サインアウトアクション
-    signOut: (state) => {
+    signedOut: (state) => {
+      state.isSignedIn = false;
       state.isLoading = false;
-      state.user = null;
     },
   },
 });
 
 // アクションをエクスポート
-export const { signInSuccess, signInFailure, signOut } = userSlice.actions;
+export const {
+  signedUp,
+  signedUpFailure,
+  signInSuccess,
+  signInFailure,
+  signedOut,
+} = userSlice.actions;
 
 // リデューサーをエクスポート
 export default userSlice.reducer;

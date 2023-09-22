@@ -1,20 +1,22 @@
-import { Auth, getAuth, initializeAuth } from "firebase/auth"; // Firebase AuthenticationのメソッドとAuthのインポート
+import { Auth, getAuth, initializeAuth, signOut } from "firebase/auth"; // Firebase AuthenticationのメソッドとAuthのインポート
 import { auth } from "../../../firebase/client";
-import { signOut } from "../../redux/userSlice"; // Reduxのサインアウトアクションをインポート
 import { useAppDispatch } from "@/app/redux/hooks";
+import { FirebaseError } from "firebase/app";
+import { signedOut } from "@/app/redux/userSlice";
 
 const SignOut = () => {
-  const dispatch = useAppDispatch(); // Reduxのディスパッチ関数を取得
-  // Firebase Authenticationの初期化
-  // const authInstance = initializeAuth(firebaseApp, authConfig);
+  const dispatch = useAppDispatch();
 
   const handleSignOut = async () => {
     try {
-      await signOut(); // Authインスタンスを使用してログアウト
-      // dispatch(signOut()); // Reduxのサインアウトアクションをディスパッチ
-      alert("ログアウトしました");
-    } catch (error: any) {
-      alert(error.message);
+      await signOut(auth);
+      dispatch(signedOut());
+      // alert("ログアウトしました");
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        console.log(error);
+        alert(error.message);
+      }
     }
   };
 

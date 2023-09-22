@@ -1,9 +1,23 @@
 import { useCallback, useState } from "react";
-import { signUp } from "../../redux/operations";
+import {
+  UserCredential,
+  createUserWithEmailAndPassword as createUserWithEmailAndPasswordV9,
+} from "firebase/auth";
+import { db } from "../../../firebase/client";
+import { doc, setDoc } from "firebase/firestore";
+import {
+  isValidRequiredInput,
+  isValidEmailFormat,
+} from "../../../function/common";
+import { useRouter } from "next/navigation";
+import { Timestamp } from "firebase/firestore";
+import { auth } from "@/firebase/client";
 import { useAppDispatch } from "@/app/redux/hooks";
+import { signedUp, signedUpFailure } from "@/app/redux/userSlice";
 
 const SignUp = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -11,31 +25,82 @@ const SignUp = () => {
 
   const inputUsername = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setUsername(e?.target.value);
+      setUsername(e.target.value);
     },
-    [setUsername]
+    []
   );
 
-  const inputEmail = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(e?.target.value);
-    },
-    [setEmail]
-  );
+  const inputEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  }, []);
 
   const inputPassword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(e?.target.value);
+      setPassword(e.target.value);
     },
-    [setPassword]
+    []
   );
 
   const inputConfirmPassword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setConfirmPassword(e?.target.value);
+      setConfirmPassword(e.target.value);
     },
-    [setConfirmPassword]
+    []
   );
+
+  const handleSignUp = async () => {
+    if (!isValidRequiredInput(username, email, password, confirmPassword)) {
+      alert("必須項目が未入力です。");
+      return;
+    }
+
+    if (!isValidEmailFormat(email)) {
+      alert("メールアドレスの形式が不正です。もう1度お試しください。");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("パスワードが一致しません。もう1度お試しください。");
+      return;
+    }
+    if (password.length < 6) {
+      alert("パスワードは6文字以上で入力してください。");
+      return;
+    }
+
+    try {
+      const result: UserCredential = await createUserWithEmailAndPasswordV9(
+        auth,
+        email,
+        password
+      );
+
+      const user = result.user;
+      if (user) {
+        const uid = user.uid;
+        const timestamp = Timestamp.now();
+
+        const userInitialData = {
+          created_at: timestamp,
+          email: email,
+          role: "member",
+          uid: uid,
+          updated_at: timestamp,
+          username: username,
+          password: password,
+        };
+
+        const userDocRef = doc(db, "users", uid);
+        await setDoc(userDocRef, userInitialData);
+
+        dispatch(signedUp());
+        router.push("/");
+      }
+    } catch (error) {
+      dispatch(signedUpFailure(error));
+      alert("アカウント登録に失敗しました。もう1度お試しください。");
+      console.error(error);
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto">
@@ -104,9 +169,7 @@ const SignUp = () => {
       <div className="mb-4">
         <button
           className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          onClick={() =>
-            dispatch(signUp(username, email, password, confirmPassword))
-          }
+          onClick={handleSignUp}
         >
           登録
         </button>

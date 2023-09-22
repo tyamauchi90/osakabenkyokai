@@ -5,16 +5,24 @@ import { useEffect, useState } from "react";
 import SignUp from "./components/auth/SignUp";
 import SignIn from "./components/auth/SignIn";
 import SignOut from "./components/auth/SignOut";
-import Example from "./components/auth/Example";
+import useUserByEmail from "./components/hooks/useUserByEmail";
 
 export default function Home() {
   const [user, setUser] = useState(auth.currentUser);
+  // const [signInUser, setSignInUser] = useState<string | null>(null);
+  console.log(user);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         // ログインしている場合の処理
         setUser(user);
+        // try {
+        //   const currentUser = await useUserByEmail(user.email);
+        //   setSignInUser(currentUser?.username || null);
+        // } catch (error) {
+        //   console.error("ユーザー情報の取得エラー:", error);
+        // }
       } else {
         // ログアウトしている場合の処理
         setUser(null);
@@ -26,18 +34,24 @@ export default function Home() {
   return (
     <>
       <h1>トップページ</h1>
+      <br />
       {user ? (
-        <SignOut />
+        <>
+          <p>サインイン中です！</p>
+          <p>【uid】　{user.uid}</p>
+          <p>【email】{user.email}</p>
+          {user?.photoURL ? (
+            <img src={user.photoURL} alt="ユーザーのプロフィール画像" />
+          ) : null}
+          <br />
+          <SignOut />
+        </>
       ) : (
         <>
           <SignIn />
           <SignUp />
         </>
       )}
-      <p>{user?.displayName}</p>
-      {user?.photoURL ? (
-        <img src={user.photoURL} alt="ユーザーのプロフィール画像" />
-      ) : null}
     </>
   );
 }
