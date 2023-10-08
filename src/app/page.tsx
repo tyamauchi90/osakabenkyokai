@@ -6,6 +6,8 @@ import SignUp from "./components/auth/SignUp";
 import SignIn from "./components/auth/SignIn";
 import SignOut from "./components/auth/SignOut";
 import useUserByEmail from "./components/hooks/useUserByEmail";
+import ResetPassword from "./components/auth/ResetPassword";
+import UpdateEmail from "./components/auth/UpdateEmail";
 
 export default function Home() {
   const [user, setUser] = useState(auth.currentUser);
@@ -37,12 +39,21 @@ export default function Home() {
       <br />
       {user ? (
         <>
-          <p>サインイン中です！</p>
+          {user.emailVerified ? (
+            <p>サインイン中です！</p>
+          ) : (
+            <p>まだ認証が済んでいません。メールをご確認ください</p>
+          )}
+          <br />
           <p>【uid】　{user.uid}</p>
           <p>【email】{user.email}</p>
           {user?.photoURL ? (
             <img src={user.photoURL} alt="ユーザーのプロフィール画像" />
           ) : null}
+          <br />
+          <UpdateEmail />
+          <br />
+          <ResetPassword firebaseAuth={auth} />
           <br />
           <SignOut />
         </>

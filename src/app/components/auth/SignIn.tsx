@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { signInSuccess, signInFailure } from "@/app/redux/userSlice";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { UserCredential, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/client";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/client";
@@ -45,13 +45,13 @@ const SignIn = () => {
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
+      const result: UserCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
 
-      const user = userCredential.user;
+      const user = result.user;
       console.log(user);
       if (!user) {
         throw new Error("ユーザーIDを取得できません");

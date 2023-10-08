@@ -1,7 +1,8 @@
 import { useCallback, useState } from "react";
 import {
   UserCredential,
-  createUserWithEmailAndPassword as createUserWithEmailAndPasswordV9,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
 } from "firebase/auth";
 import { db } from "../../../firebase/client";
 import { doc, setDoc } from "firebase/firestore";
@@ -53,7 +54,6 @@ const SignUp = () => {
       alert("必須項目が未入力です。");
       return;
     }
-
     if (!isValidEmailFormat(email)) {
       alert("メールアドレスの形式が不正です。もう1度お試しください。");
       return;
@@ -68,14 +68,15 @@ const SignUp = () => {
     }
 
     try {
-      const result: UserCredential = await createUserWithEmailAndPasswordV9(
+      const result: UserCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-
       const user = result.user;
+
       if (user) {
+        await sendEmailVerification(user);
         const uid = user.uid;
         const timestamp = Timestamp.now();
 
@@ -91,9 +92,9 @@ const SignUp = () => {
 
         const userDocRef = doc(db, "users", uid);
         await setDoc(userDocRef, userInitialData);
-
         dispatch(signedUp());
         router.push("/");
+        alert("確認メールを送信しました。有効化をお願いします。");
       }
     } catch (error) {
       dispatch(signedUpFailure(error));
