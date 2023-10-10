@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { auth } from "@/firebase/client";
+import { auth, db } from "@/firebase/client";
 import { isValidEmailFormat } from "@/function/common";
 import { FirebaseError } from "@firebase/util";
 import {
@@ -8,6 +8,7 @@ import {
   reauthenticateWithCredential,
   updateEmail,
 } from "firebase/auth";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 const UpdateEmail = () => {
   const [newEmail, setNewEmail] = useState<string>("");
@@ -37,15 +38,33 @@ const UpdateEmail = () => {
       alert("パスワードは6文字以上で入力してください。");
       return;
     }
-    const user = auth.currentUser;
     try {
-      const credential = await EmailAuthProvider.credential(
-        user?.email ?? "",
-        password
-      );
-      user && (await reauthenticateWithCredential(user, credential));
-      user && (await updateEmail(user, newEmail));
+      const user = auth.currentUser;
+      if (user) {
+        // Authentication
+        const credential = await EmailAuthProvider.credential(
+          user?.email ?? "",
+          password
+        );
+        user && (await reauthenticateWithCredential(user, credential));
+        user && (await updateEmail(user, newEmail));
+
+        //Firestore
+        const uid = user.uid;
+        const userDocRef = doc(db, "users", uid);
+        await setDoc(
+          userDocRef,
+          {
+            updated_at: serverTimestamp(),
+            email: newEmail,
+          },
+          {
+            merge: true, // 既存のデータとマージ
+          }
+        );
+      }
       router.push("/");
+      window.location.reload();
       alert(
         "新しいメールアドレスに確認のメールを送信しました。メールをご確認の上、手続きを完了させてください。"
       );

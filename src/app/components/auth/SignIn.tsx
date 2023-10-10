@@ -4,7 +4,7 @@ import { signInSuccess, signInFailure } from "@/app/redux/userSlice";
 import { useRouter } from "next/navigation";
 import { UserCredential, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/client";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../../../firebase/client";
 import { FirebaseError } from "firebase/app";
 import {
@@ -57,13 +57,26 @@ const SignIn = () => {
         throw new Error("ユーザーIDを取得できません");
       }
 
-      const userId = user.uid;
-      const userDocRef = doc(db, "users", userId);
-      const snapshot = await getDoc(userDocRef);
-      const data = snapshot.data();
+      const uid = user.uid;
+      const userDocRef = doc(db, "users", uid);
+      const _snapshot = await getDoc(userDocRef);
+      const data = _snapshot.data();
 
       if (!data) {
         throw new Error("ユーザーデータが存在しません");
+      }
+
+      if (data.password != password) {
+        await setDoc(
+          userDocRef,
+          {
+            // updated_at: serverTimestamp(),
+            password: password,
+          },
+          {
+            merge: true, // 既存のデータとマージ
+          }
+        );
       }
 
       dispatch(signInSuccess()); // 非同期関数の外側で呼び出し

@@ -3,6 +3,7 @@ import {
   UserCredential,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import { db } from "../../../firebase/client";
 import { doc, setDoc } from "firebase/firestore";
@@ -92,6 +93,9 @@ const SignUp = () => {
 
         const userDocRef = doc(db, "users", uid);
         await setDoc(userDocRef, userInitialData);
+        await updateProfile(user, {
+          displayName: username,
+        });
         dispatch(signedUp());
         router.push("/");
         alert("確認メールを送信しました。有効化をお願いします。");

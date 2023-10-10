@@ -8,6 +8,8 @@ import SignOut from "./components/auth/SignOut";
 import useUserByEmail from "./components/hooks/useUserByEmail";
 import ResetPassword from "./components/auth/ResetPassword";
 import UpdateEmail from "./components/auth/UpdateEmail";
+import DeleteUser from "./components/auth/DeleteUser";
+import UpdateUsername from "./components/auth/UpdateUsername";
 
 export default function Home() {
   const [user, setUser] = useState(auth.currentUser);
@@ -45,6 +47,7 @@ export default function Home() {
             <p>まだ認証が済んでいません。メールをご確認ください</p>
           )}
           <br />
+          <p>【表示名】　{user.displayName}</p>
           <p>【uid】　{user.uid}</p>
           <p>【email】{user.email}</p>
           {user?.photoURL ? (
@@ -53,9 +56,13 @@ export default function Home() {
           <br />
           <UpdateEmail />
           <br />
+          <UpdateUsername />
+          <br />
           <ResetPassword firebaseAuth={auth} />
           <br />
           <SignOut />
+          <br />
+          <DeleteUser />
         </>
       ) : (
         <>
