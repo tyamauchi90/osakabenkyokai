@@ -1,4 +1,6 @@
-import { useCallback, useState } from "react";
+"use client";
+
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { signInSuccess, signInFailure } from "@/app/redux/userSlice";
 import { useRouter } from "next/navigation";
@@ -7,43 +9,37 @@ import { auth } from "@/firebase/client";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../../../firebase/client";
 import { FirebaseError } from "firebase/app";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import {
-  isValidRequiredInput,
-  isValidEmailFormat,
-} from "../../../function/common";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../shadcn/ui/form";
+import { Input } from "../shadcn/ui/input";
+import { Button } from "../shadcn/ui/button";
+
+const formSchema = z.object({
+  email: z.string().email({ message: "メールアドレスの形式ではありません。" }),
+  password: z
+    .string()
+    .min(8, { message: "8文字以上入力してください。" })
+    .max(32, { message: "32文字以下で入力してください。" }),
+});
 
 const SignIn = () => {
   const isSignedIn = useAppSelector((state) => state.user.isSignedIn);
   const dispatch = useAppDispatch();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const router = useRouter(); // 非同期関数の外側で呼び出し
+  const router = useRouter();
 
-  const inputEmail = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setEmail(e.target.value);
-    },
-    [setEmail]
-  );
-
-  const inputPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(e.target.value);
-    },
-    [setPassword]
-  );
-
-  const handleSignIn = async () => {
-    if (!isValidRequiredInput(email, password)) {
-      alert("メールアドレスかパスワードが未入力です。");
-      return;
-    }
-
-    if (!isValidEmailFormat(email)) {
-      alert("メールアドレスの形式が不正です。");
-      return;
-    }
-
+  const handleSignIn = async (email: string, password: string) => {
     try {
       const result: UserCredential = await signInWithEmailAndPassword(
         auth,
@@ -70,69 +66,95 @@ const SignIn = () => {
         await setDoc(
           userDocRef,
           {
-            // updated_at: serverTimestamp(),
+            updated_at: serverTimestamp(),
             password: password,
           },
           {
-            merge: true, // 既存のデータとマージ
+            merge: true,
           }
         );
       }
 
-      dispatch(signInSuccess()); // 非同期関数の外側で呼び出し
+      dispatch(signInSuccess());
       router.push("/");
     } catch (error) {
       if (error instanceof FirebaseError) {
-        dispatch(signInFailure(error.message)); // 非同期関数の外側で呼び出し
+        dispatch(signInFailure(error.message));
         alert(error.message);
         console.error(error);
       }
     }
   };
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const result = formSchema.safeParse(values);
+    const errors = result.success ? {} : result.error.flatten().fieldErrors;
+    if (Object.keys(errors).length === 0) {
+      // エラーがない場合にのみサインイン処理を実行
+      handleSignIn(values.email, values.password);
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto">
-      <h1>ようこそ、{isSignedIn || "ゲスト"}さん！</h1>
-      <h2 className="text-2xl font-semibold mb-4">サインイン</h2>
-
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-          メールアドレス
-        </label>
-        <input
-          type="email"
-          id="email"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="メールアドレスを入力"
-          value={email}
-          onChange={inputEmail}
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="password"
-          className="block text-gray-700 font-medium mb-2"
+      {/* <h1>ようこそ、{isSignedIn || "ゲスト"}さん！</h1> */}
+      {/* <h2 className="text-2xl font-semibold mb-4">サインイン</h2> */}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="max-w-md space-y-8"
         >
-          パスワード
-        </label>
-        <input
-          type="password"
-          id="password"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="パスワードを入力"
-          value={password}
-          onChange={inputPassword}
-        />
-      </div>
-
-      <div className="mb-4">
-        <button
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          onClick={handleSignIn}
-        >
-          サインイン
-        </button>
-      </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>メールアドレス</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="メールアドレスを入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （ご登録いただいたメールアドレスを入力してください）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>パスワード</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="パスワードを入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （ご登録いただいたパスワードを入力してください）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">ログイン</Button>
+        </form>
+      </Form>
     </div>
   );
 };

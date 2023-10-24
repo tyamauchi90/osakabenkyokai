@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { auth, db } from "@/firebase/client";
-import { isValidEmailFormat } from "@/function/common";
 import { FirebaseError } from "@firebase/util";
 import {
   EmailAuthProvider,
@@ -9,111 +8,155 @@ import {
   updateEmail,
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../shadcn/ui/form";
+import { Input } from "../shadcn/ui/input";
+import { Button } from "../shadcn/ui/button";
+import { z } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const formSchema = z.object({
+  email: z.string().email({ message: "メールアドレスの形式ではありません。" }),
+  password: z
+    .string()
+    .min(8, { message: "8文字以上入力してください。" })
+    .max(32, { message: "32文字以下で入力してください。" }),
+});
+
+type FormValuesType = {
+  email: string;
+  password: string;
+};
 
 const UpdateEmail = () => {
   const [newEmail, setNewEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
 
-  const inputNewEmail = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEmail(e.target.value);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
     },
-    []
-  );
+  });
 
-  const inputPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(e.target.value);
-    },
-    []
-  );
+  const onSubmit: SubmitHandler<FormValuesType> = async (
+    values: z.infer<typeof formSchema>
+  ) => {
+    const result = formSchema.safeParse(values);
+    const errors = result.success ? {} : result.error.flatten().fieldErrors;
+    if (Object.keys(errors).length === 0) {
+      // エラーがない場合にのみメールアドレス変更用メールを送信
+      const newEmail = values.email;
+      const password = values.password;
+      setNewEmail(newEmail); // 新しいメールアドレスを設定
+      setPassword(password);
 
-  const handleUpdateEmail = async () => {
-    if (!isValidEmailFormat(newEmail)) {
-      alert("メールアドレスの形式が不正です。もう1度お試しください。");
-      return;
-    }
-    if (password.length < 6) {
-      alert("パスワードは6文字以上で入力してください。");
-      return;
-    }
-    try {
-      const user = auth.currentUser;
-      if (user) {
-        // Authentication
-        const credential = await EmailAuthProvider.credential(
-          user?.email ?? "",
-          password
-        );
-        user && (await reauthenticateWithCredential(user, credential));
-        user && (await updateEmail(user, newEmail));
+      const handleUpdateEmail = async () => {
+        try {
+          const user = auth.currentUser;
+          if (user) {
+            // Authentication
+            const credential = await EmailAuthProvider.credential(
+              user?.email ?? "",
+              password
+            );
+            user && (await reauthenticateWithCredential(user, credential));
+            user && (await updateEmail(user, newEmail));
 
-        //Firestore
-        const uid = user.uid;
-        const userDocRef = doc(db, "users", uid);
-        await setDoc(
-          userDocRef,
-          {
-            updated_at: serverTimestamp(),
-            email: newEmail,
-          },
-          {
-            merge: true, // 既存のデータとマージ
+            //Firestore
+            const uid = user.uid;
+            const userDocRef = doc(db, "users", uid);
+            await setDoc(
+              userDocRef,
+              {
+                updated_at: serverTimestamp(),
+                email: newEmail,
+              },
+              {
+                merge: true, // 既存のデータとマージ
+              }
+            );
           }
-        );
-      }
-      router.push("/");
-      window.location.reload();
-      alert(
-        "新しいメールアドレスに確認のメールを送信しました。メールをご確認の上、手続きを完了させてください。"
-      );
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        console.error(e);
-      }
+          router.push("/");
+          window.location.reload();
+          alert(
+            "新しいメールアドレスに確認のメールを送信しました。メールをご確認の上、手続きを完了させてください。"
+          );
+        } catch (e) {
+          if (e instanceof FirebaseError) {
+            console.error(e);
+          }
+          console.error(e);
+          throw e; // エラーを再度スローし、呼び出し元で処理する
+        }
+      };
+      await handleUpdateEmail();
     }
   };
 
   return (
     <div className="max-w-md mx-auto">
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-          新しいメールアドレス
-        </label>
-        <input
-          type="email"
-          id="email"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="新しいメールアドレスを入力"
-          value={newEmail}
-          onChange={inputNewEmail}
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="password"
-          className="block text-gray-700 font-medium mb-2"
+      <h2 className="bg-gradient-to-r from-yellow-100 px-2 py-4 rounded">
+        メールアドレスを変更する
+      </h2>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="max-w-md space-y-8"
         >
-          パスワード
-        </label>
-        <input
-          type="password"
-          id="password"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="パスワードを入力"
-          value={password}
-          onChange={inputPassword}
-        />
-      </div>
-      <div className="mb-4">
-        <button
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          onClick={handleUpdateEmail}
-        >
-          更新
-        </button>
-      </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>メールアドレス</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="メールアドレスを入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （新しいメールアドレスを入力してください）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>パスワード</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="パスワードを入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （ご登録いただいたパスワードを入力してください）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">更　新</Button>
+        </form>
+      </Form>
     </div>
   );
 };

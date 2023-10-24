@@ -1,9 +1,10 @@
-import { Auth, getAuth, initializeAuth, signOut } from "firebase/auth"; // Firebase AuthenticationのメソッドとAuthのインポート
+import { signOut } from "firebase/auth"; // Firebase AuthenticationのメソッドとAuthのインポート
 import { auth } from "../../../firebase/client";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { FirebaseError } from "firebase/app";
 import { signedOut } from "@/app/redux/userSlice";
 import { useRouter } from "next/navigation";
+import PrimaryButton from "../atoms/button/PrimaryButton";
 
 const SignOut = () => {
   const dispatch = useAppDispatch();
@@ -24,8 +25,10 @@ const SignOut = () => {
   };
 
   return (
-    <div className="signOut">
-      <button onClick={handleSignOut}>サインアウト</button>
+    <div className="max-w-md mx-auto">
+      <div className="mb-4">
+        <PrimaryButton handleClick={handleSignOut}>サインアウト</PrimaryButton>
+      </div>
     </div>
   );
 };

@@ -1,4 +1,6 @@
-import { useCallback, useState } from "react";
+"use client";
+
+import { useState } from "react";
 import {
   UserCredential,
   createUserWithEmailAndPassword,
@@ -7,15 +9,41 @@ import {
 } from "firebase/auth";
 import { db } from "../../../firebase/client";
 import { doc, setDoc } from "firebase/firestore";
-import {
-  isValidRequiredInput,
-  isValidEmailFormat,
-} from "../../../function/common";
 import { useRouter } from "next/navigation";
 import { Timestamp } from "firebase/firestore";
 import { auth } from "@/firebase/client";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { signedUp, signedUpFailure } from "@/app/redux/userSlice";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../shadcn/ui/form";
+import { Input } from "../shadcn/ui/input";
+import { Button } from "../shadcn/ui/button";
+
+const formSchema = z.object({
+  username: z
+    .string()
+    .min(2, { message: "2文字以上入力してください。" })
+    .max(50, { message: "50文字以下で入力してください。" }),
+  email: z.string().email({ message: "メールアドレスの形式ではありません。" }),
+  password: z
+    .string()
+    .min(8, { message: "8文字以上入力してください。" })
+    .max(32, { message: "32文字以下で入力してください。" }),
+  confirmpassword: z
+    .string()
+    .min(8, { message: "8文字以上入力してください。" })
+    .max(32, { message: "32文字以下で入力してください。" }),
+});
 
 const SignUp = () => {
   const dispatch = useAppDispatch();
@@ -25,49 +53,12 @@ const SignUp = () => {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const inputUsername = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setUsername(e.target.value);
-    },
-    []
-  );
-
-  const inputEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  }, []);
-
-  const inputPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(e.target.value);
-    },
-    []
-  );
-
-  const inputConfirmPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setConfirmPassword(e.target.value);
-    },
-    []
-  );
-
-  const handleSignUp = async () => {
-    if (!isValidRequiredInput(username, email, password, confirmPassword)) {
-      alert("必須項目が未入力です。");
-      return;
-    }
-    if (!isValidEmailFormat(email)) {
-      alert("メールアドレスの形式が不正です。もう1度お試しください。");
-      return;
-    }
-    if (password !== confirmPassword) {
-      alert("パスワードが一致しません。もう1度お試しください。");
-      return;
-    }
-    if (password.length < 6) {
-      alert("パスワードは6文字以上で入力してください。");
-      return;
-    }
-
+  const handleSignUp = async (
+    username: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) => {
     try {
       const result: UserCredential = await createUserWithEmailAndPassword(
         auth,
@@ -107,78 +98,119 @@ const SignUp = () => {
     }
   };
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmpassword: "",
+    },
+  });
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const result = formSchema.safeParse(values);
+    const errors = result.success ? {} : result.error.flatten().fieldErrors;
+    if (Object.keys(errors).length === 0) {
+      handleSignUp(
+        values.username,
+        values.email,
+        values.password,
+        values.confirmpassword
+      );
+    }
+  }
+
   return (
     <div className="max-w-md mx-auto">
       <h2 className="text-2xl font-semibold mb-4">アカウント登録</h2>
-      <div className="mb-4">
-        <label
-          htmlFor="username"
-          className="block text-gray-700 font-medium mb-2"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="max-w-md space-y-8"
         >
-          ユーザー名
-        </label>
-        <input
-          type="text"
-          id="username"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="ユーザー名を入力"
-          value={username}
-          onChange={inputUsername}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
-          メールアドレス
-        </label>
-        <input
-          type="email"
-          id="email"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="メールアドレスを入力"
-          value={email}
-          onChange={inputEmail}
-        />
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="password"
-          className="block text-gray-700 font-medium mb-2"
-        >
-          パスワード
-        </label>
-        <input
-          type="password"
-          id="password"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="パスワードを入力"
-          value={password}
-          onChange={inputPassword}
-        />
-      </div>
-      <div className="mb-6">
-        <label
-          htmlFor="confirmPassword"
-          className="block text-gray-700 font-medium mb-2"
-        >
-          パスワード確認
-        </label>
-        <input
-          type="password"
-          id="confirmPassword"
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
-          placeholder="パスワードを再入力"
-          value={confirmPassword}
-          onChange={inputConfirmPassword}
-        />
-      </div>
-      <div className="mb-4">
-        <button
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          onClick={handleSignUp}
-        >
-          登録
-        </button>
-      </div>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ユーザー名</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="ユーザー名を入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （このサイトでの表示名となります。後から変更も可能です）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>メールアドレス</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="メールアドレスを入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （登録後に確認のメールをお送りします）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>パスワード</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="パスワードを8~32文字で入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （大切に保管しておいてください。忘れてしまった場合は変更可能です）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmpassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>パスワード確認</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="もう一度パスワードを入力してください"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  （確認のため登録したパスワードを入力してください）
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">登　録</Button>
+        </form>
+      </Form>
     </div>
   );
 };

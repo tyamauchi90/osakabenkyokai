@@ -29,6 +29,6 @@
     "**/**/*.tsx",
     "**/**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/app/components/auth/useAuthCurrentUser.ts"  ],
   "exclude": ["node_modules"]
 }

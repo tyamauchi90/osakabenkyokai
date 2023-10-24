@@ -8,6 +8,7 @@ import {
 import { auth } from "@/firebase/client";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
+import PrimaryButton from "../atoms/button/PrimaryButton";
 
 interface ResetPasswordProps {
   firebaseAuth: Auth;
@@ -21,7 +22,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ firebaseAuth }) => {
     handleCodeInApp: false,
   };
 
-  const handleResetPassword = async (email: string) => {
+  const resetPassword = async (email: string) => {
     try {
       await sendPasswordResetEmail(firebaseAuth, email, actionCodeSettings);
     } catch (err) {
@@ -29,12 +30,12 @@ const ResetPassword: FC<ResetPasswordProps> = ({ firebaseAuth }) => {
     }
   };
 
-  const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleResetPassword = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       const user: User | null = auth.currentUser; // User型またはnullを許容するように型指定
       if (user) {
-        await handleResetPassword(user.email!); // ユーザーのメールアドレスを指定
+        await resetPassword(user.email!); // ユーザーのメールアドレスを指定
 
         router.push("/");
         window.location.reload();
@@ -50,8 +51,12 @@ const ResetPassword: FC<ResetPasswordProps> = ({ firebaseAuth }) => {
   };
 
   return (
-    <div>
-      <button onClick={handleClick}>パスワードをリセット</button>
+    <div className="max-w-md mx-auto">
+      <div className="mb-4">
+        <PrimaryButton handleClick={handleResetPassword}>
+          パスワードをリセット
+        </PrimaryButton>
+      </div>
     </div>
   );
 };

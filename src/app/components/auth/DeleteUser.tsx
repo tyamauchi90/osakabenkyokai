@@ -7,6 +7,7 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import { deleteDoc, doc } from "firebase/firestore";
+import PrimaryButton from "../atoms/button/PrimaryButton";
 
 const DeleteUser = () => {
   const router = useRouter();
@@ -46,12 +47,7 @@ const DeleteUser = () => {
   return (
     <div className="max-w-md mx-auto">
       <div className="mb-4">
-        <button
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-          onClick={handleDeleteUser}
-        >
-          退会する
-        </button>
+        <PrimaryButton handleClick={handleDeleteUser}>退会する</PrimaryButton>
       </div>
     </div>
   );
