@@ -28,14 +28,16 @@ const Header = () => {
 
   return (
     <>
-      <header>
-        <div className="m-2 flex justify-end">
-          <NavigationMenu>
+      <header className="sticky top-0 z-50 bg-white w-full h-20">
+        <div className="flex items-center justify-end m-2 p-4">
+          <NavigationMenu className="justify-end max-w-fit">
             <NavigationMenuList>
               {/* トップ */}
               <NavigationMenuItem>
                 <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <NavigationMenuLink
+                    className={`${navigationMenuTriggerStyle()} text-base`}
+                  >
                     おおさか勉強会トップ
                   </NavigationMenuLink>
                 </Link>
@@ -43,25 +45,27 @@ const Header = () => {
 
               {/* サークル */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger>サークル</NavigationMenuTrigger>
-                <NavigationMenuContent>
+                <NavigationMenuTrigger className="text-base">
+                  サークル
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="p-4">
                   <Link href="/circle/about" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
+                      className={`${navigationMenuTriggerStyle()} text-base`}
                     >
                       サークル紹介
                     </NavigationMenuLink>
                   </Link>
                   <Link href="/circle/blog" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
+                      className={`${navigationMenuTriggerStyle()} text-base`}
                     >
                       ブログ
                     </NavigationMenuLink>
                   </Link>
                   <Link href="/circle/schedule" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
+                      className={`${navigationMenuTriggerStyle()} text-base`}
                     >
                       スケジュール
                     </NavigationMenuLink>
@@ -72,14 +76,16 @@ const Header = () => {
               {/* お問合せ */}
               <NavigationMenuItem>
                 <Link href="/contact" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <NavigationMenuLink
+                    className={`${navigationMenuTriggerStyle()} text-base`}
+                  >
                     お問合せ
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
 
               {/* マイページ */}
-              <NavigationMenuItem>
+              <NavigationMenuItem className="text-base">
                 {!user ? (
                   <>
                     <Dialog>
@@ -128,7 +134,7 @@ const Header = () => {
                 ) : (
                   <Link href="/user/mypage" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
+                      className={`${navigationMenuTriggerStyle()} text-base`}
                     >
                       マイページ
                     </NavigationMenuLink>
