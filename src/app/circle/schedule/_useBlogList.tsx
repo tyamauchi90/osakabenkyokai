@@ -3,33 +3,26 @@ import { db } from "@/firebase/client";
 import {
   DocumentData,
   QueryDocumentSnapshot,
-  Timestamp,
   collection,
   getDocs,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-
-type postsType = {
-  id: string;
-  title?: string;
-  content?: string;
-  eventDate?: Timestamp;
-};
+import type { postType } from "../../type/postType";
 
 function useBlogList() {
-  const [posts, setPosts] = useState<postsType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<postType[]>([]);
 
   useEffect(() => {
+    // Firestoreから投稿データを取得する（clientSDKバージョン）
     async function fetchPosts() {
       const postsCollectionRef = collection(db, "posts");
       try {
         const querySnapshot = await getDocs(postsCollectionRef);
-        const postsData: postsType[] = [];
+        const postsData: postType[] = [];
         querySnapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
           const post = doc.data();
-          const postData: postsType = {
-            id: doc.id,
+          const postData: postType = {
+            id: doc.id, // ドキュメントIDを設定
             ...post,
           };
           postsData.push(postData);
@@ -37,15 +30,13 @@ function useBlogList() {
         setPosts(postsData);
       } catch (error) {
         console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
       }
     }
 
     fetchPosts();
   }, []);
 
-  return { posts, loading };
+  return posts;
 }
 
 export default useBlogList;

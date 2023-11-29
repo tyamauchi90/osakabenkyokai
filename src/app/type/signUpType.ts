@@ -10,7 +10,6 @@ export interface initialUserState {
     email: string;
     isSignedIn: boolean;
     role: string;
-    // payment_method_id: data.payment_method_id || "",
     uid: string;
     username: string;
   };

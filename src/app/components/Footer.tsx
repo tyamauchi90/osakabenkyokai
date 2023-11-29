@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import useAuthCurrentUser from "../auth/useAuthCurrentUser";
+import useAuthCurrentUser from "./auth/useAuthCurrentUser";
 
 const Footer = () => {
   const user = useAuthCurrentUser();

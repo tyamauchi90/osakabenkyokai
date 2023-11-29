@@ -4,7 +4,7 @@ import { getMessaging, getToken } from "firebase/messaging";
 // subsequent calls to getToken will return from cache.
 const messaging = getMessaging();
 getToken(messaging, {
-  vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_VAPID_KEY,
+  vapidKey: process.env.FIREBASE_PUBLIC_VAPID_KEY,
 })
   .then((currentToken) => {
     if (currentToken) {

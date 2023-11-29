@@ -37,3 +37,12 @@ firestore.rules
 src/firebase/admin.json
 firebase-messaging-sw.js
 .vscode/launch.json
+admin.json
+src/app/test/error.tsx
+src/app/test/page.tsx
+src/app/test/PostsList.tsx
+src/app/test/UsersList.tsx
+src/app/testuser/page.tsx
+src/app/testuser/[id]/loading.tsx
+src/app/testuser/[id]/not-found.tsx
+src/app/testuser/[id]/page.tsx

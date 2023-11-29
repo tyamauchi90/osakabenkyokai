@@ -1,5 +1,3 @@
-import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
 import { auth, db } from "@/firebase/client";
 import { isValidEmailFormat } from "@/function/common";
 import { FirebaseError } from "@firebase/util";
@@ -9,7 +7,9 @@ import {
   updateEmail,
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import PrimaryButton from "../atoms/button/PrimaryButton";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import PrimaryButton from "../ui/button/PrimaryButton";
 
 const UpdateEmail = () => {
   const [newEmail, setNewEmail] = useState<string>("");

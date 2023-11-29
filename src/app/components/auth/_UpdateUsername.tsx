@@ -5,7 +5,7 @@ import { updateProfile } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import PrimaryButton from "../atoms/button/PrimaryButton";
+import PrimaryButton from "../ui/button/PrimaryButton";
 
 const UpdateUsername = () => {
   const router = useRouter();

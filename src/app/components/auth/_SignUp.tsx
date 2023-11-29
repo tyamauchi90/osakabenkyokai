@@ -1,24 +1,23 @@
-import { useCallback, useState } from "react";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { signedUp, signedUpFailure } from "@/app/redux/userSlice";
+import { auth } from "@/firebase/client";
 import {
   UserCredential,
   createUserWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
-import { db } from "../../../firebase/client";
-import { doc, setDoc } from "firebase/firestore";
-import {
-  isValidRequiredInput,
-  isValidEmailFormat,
-} from "../../../function/common";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { Timestamp } from "firebase/firestore";
-import { auth } from "@/firebase/client";
-import { useAppDispatch } from "@/app/redux/hooks";
-import { signedUp, signedUpFailure } from "@/app/redux/userSlice";
-import PrimaryButton from "../atoms/button/PrimaryButton";
-import PrimaryInput from "../atoms/input/PrimaryInput";
-import PrimaryLabel from "../atoms/label/PrimaryLabel";
+import { useCallback, useState } from "react";
+import { db } from "../../../firebase/client";
+import {
+  isValidEmailFormat,
+  isValidRequiredInput,
+} from "../../../function/common";
+import PrimaryButton from "../ui/button/PrimaryButton";
+import PrimaryInput from "../ui/input/PrimaryInput";
+import PrimaryLabel from "../ui/label/PrimaryLabel";
 
 const SignUp = () => {
   const dispatch = useAppDispatch();

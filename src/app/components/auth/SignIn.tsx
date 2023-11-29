@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { signInSuccess, signInFailure } from "@/app/redux/userSlice";
-import { useRouter } from "next/navigation";
-import { UserCredential, signInWithEmailAndPassword } from "firebase/auth";
+import { signInFailure, signInSuccess } from "@/app/redux/userSlice";
 import { auth } from "@/firebase/client";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "../../../firebase/client";
-import { FirebaseError } from "firebase/app";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FirebaseError } from "firebase/app";
+import { UserCredential, signInWithEmailAndPassword } from "firebase/auth";
+import { Timestamp, doc, getDoc, setDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
+import { db } from "../../../firebase/client";
+import { Button } from "../shadcn/ui/button";
 import {
   Form,
   FormControl,
@@ -22,7 +23,7 @@ import {
   FormMessage,
 } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
-import { Button } from "../shadcn/ui/button";
+import { useToast } from "../shadcn/ui/use-toast";
 
 const formSchema = z.object({
   email: z.string().email({ message: "メールアドレスの形式ではありません。" }),
@@ -32,19 +33,49 @@ const formSchema = z.object({
     .max(32, { message: "32文字以下で入力してください。" }),
 });
 
+type SignInType = {
+  email: string;
+  password: string;
+};
+
 const SignIn = () => {
   const isSignedIn = useAppSelector((state) => state.user.isSignedIn);
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
-  const handleSignIn = async (email: string, password: string) => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<SignInType> = async (
+    values: z.infer<typeof formSchema>
+  ) => {
+    const result = formSchema.safeParse(values);
+    const errors = result.success ? {} : result.error.flatten().fieldErrors;
+    if (Object.keys(errors).length === 0) {
+      // エラーがない場合にのみサインイン処理を実行
+      try {
+        await handleSignIn();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const handleSignIn = async () => {
     try {
+      setLoading(true);
+      const formData = form.getValues();
       const result: UserCredential = await signInWithEmailAndPassword(
         auth,
-        email,
-        password
+        formData.email,
+        formData.password
       );
 
       const user = result.user;
@@ -62,12 +93,12 @@ const SignIn = () => {
         throw new Error("ユーザーデータが存在しません");
       }
 
-      if (data.password != password) {
+      if (data.password != formData.password) {
         await setDoc(
           userDocRef,
           {
-            updated_at: serverTimestamp(),
-            password: password,
+            updated_at: Timestamp.now(),
+            password: formData.password,
           },
           {
             merge: true,
@@ -76,42 +107,32 @@ const SignIn = () => {
       }
 
       dispatch(signInSuccess());
+      form.reset();
       router.push("/");
+      toast({
+        title: "サインイン完了",
+        description: "サインインしました",
+      });
     } catch (error) {
       if (error instanceof FirebaseError) {
         dispatch(signInFailure(error.message));
         alert(error.message);
         console.error(error);
+        toast({
+          title: "サインイン失敗",
+          description:
+            "サインインに失敗しました。メールアドレスとパスワードを再確認してください。",
+        });
       }
-    }
-  };
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const result = formSchema.safeParse(values);
-    const errors = result.success ? {} : result.error.flatten().fieldErrors;
-    if (Object.keys(errors).length === 0) {
-      // エラーがない場合にのみサインイン処理を実行
-      handleSignIn(values.email, values.password);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      {/* <h1>ようこそ、{isSignedIn || "ゲスト"}さん！</h1> */}
-      {/* <h2 className="text-2xl font-semibold mb-4">サインイン</h2> */}
+    <div className="max-w-lg w-full mx-auto">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-md space-y-8"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="email"
@@ -152,7 +173,16 @@ const SignIn = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">ログイン</Button>
+          <Button
+            type="submit"
+            className={`w-28 ${loading && "opacity-50 cursor-not-allowed"}`}
+          >
+            {loading ? (
+              <div className="animate-spin rounded-full border-t-2 border-r-2 border-b-2 border-white h-6 w-6"></div>
+            ) : (
+              "サインイン"
+            )}
+          </Button>
         </form>
       </Form>
     </div>
