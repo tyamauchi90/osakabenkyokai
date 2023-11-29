@@ -3,7 +3,9 @@ import { getMessaging, getToken } from "firebase/messaging";
 // Get registration token. Initially this makes a network call, once retrieved
 // subsequent calls to getToken will return from cache.
 const messaging = getMessaging();
-getToken(messaging, { vapidKey: process.env.FIREBASE_PUBLIC_VAPID_KEY })
+getToken(messaging, {
+  vapidKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_VAPID_KEY,
+})
   .then((currentToken) => {
     if (currentToken) {
       // Send the token to your server and update the UI if necessary
