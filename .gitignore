@@ -46,3 +46,4 @@ src/app/testuser/page.tsx
 src/app/testuser/[id]/loading.tsx
 src/app/testuser/[id]/not-found.tsx
 src/app/testuser/[id]/page.tsx
+.react-email
