@@ -13,15 +13,14 @@
 // }
 
 // export const adminDB = getFirestore();
-const admin = require("firebase-admin");
+const firebaseAdmin = require("firebase-admin");
 const serviceAccount = require("../../admin.json");
 
 // 既に初期化されているかどうかをチェックする
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+if (!firebaseAdmin.apps.length) {
+  firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount),
   });
 }
 
-const firebaseAdmin = admin;
 export { firebaseAdmin };

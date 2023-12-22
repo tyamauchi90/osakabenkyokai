@@ -15,21 +15,20 @@ import {
 } from "./shadcn/ui/dialog";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./shadcn/ui/navigation-menu";
+import { ModeToggle } from "./theme/ModeToggle";
 
 const Header = () => {
   const user = useAuthCurrentUser();
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white w-full h-20">
-        <div className="flex items-center justify-end m-2 p-4">
+      <header className="sticky top-0 z-50 bg-white w-full h-20 dark:bg-black">
+        <div className="flex items-center justify-end p-4">
           <NavigationMenu className="justify-end max-w-fit">
             <NavigationMenuList>
               {/* トップ */}
@@ -43,8 +42,41 @@ const Header = () => {
                 </Link>
               </NavigationMenuItem>
 
-              {/* サークル */}
+              {/* サンプル */}
               <NavigationMenuItem>
+                <Link href="/circle/sample" legacyBehavior passHref>
+                  <NavigationMenuLink
+                    className={`${navigationMenuTriggerStyle()} text-base`}
+                  >
+                    サンプル
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              {/* ブログ */}
+              <NavigationMenuItem>
+                <Link href="/circle/blog" legacyBehavior passHref>
+                  <NavigationMenuLink
+                    className={`${navigationMenuTriggerStyle()} text-base`}
+                  >
+                    ブログ
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              {/* スケジュール */}
+              <NavigationMenuItem>
+                <Link href="/circle/schedule" legacyBehavior passHref>
+                  <NavigationMenuLink
+                    className={`${navigationMenuTriggerStyle()} text-base`}
+                  >
+                    スケジュール
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+
+              {/* サークル */}
+              {/* <NavigationMenuItem>
                 <NavigationMenuTrigger className="text-sm">
                   サークル
                 </NavigationMenuTrigger>
@@ -78,18 +110,7 @@ const Header = () => {
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              {/* お問合せ */}
-              <NavigationMenuItem>
-                <Link href="/contact" legacyBehavior passHref>
-                  <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} text-base`}
-                  >
-                    お問合せ
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
+              </NavigationMenuItem> */}
 
               {/* マイページ */}
               <NavigationMenuItem className="text-base">
@@ -151,6 +172,11 @@ const Header = () => {
                     </NavigationMenuLink>
                   </Link>
                 )}
+              </NavigationMenuItem>
+
+              {/* Darkモード */}
+              <NavigationMenuItem className="">
+                <ModeToggle />
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>

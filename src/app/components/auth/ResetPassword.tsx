@@ -54,7 +54,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ firebaseAuth }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto my-7">
       <div className="mb-4">
         <PrimaryButton handleClick={handleResetPassword}>
           パスワードをリセット

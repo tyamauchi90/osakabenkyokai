@@ -1,13 +1,17 @@
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { auth, db } from "@/firebase/client";
 import { FirebaseError } from "@firebase/util";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updateEmail,
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "../shadcn/ui/button";
 import {
   Form,
   FormControl,
@@ -18,10 +22,6 @@ import {
   FormMessage,
 } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
-import { Button } from "../shadcn/ui/button";
-import { z } from "zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   email: z.string().email({ message: "メールアドレスの形式ではありません。" }),
@@ -105,10 +105,7 @@ const UpdateEmail = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <h2 className="bg-gradient-to-r from-yellow-100 px-2 py-4 rounded">
-        メールアドレスを変更する
-      </h2>
+    <div className="max-w-md mx-auto my-7">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

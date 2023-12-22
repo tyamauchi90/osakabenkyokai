@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import BackToTopBtn from "./BackToTopBtn";
 import useAuthCurrentUser from "./auth/useAuthCurrentUser";
 
 const Footer = () => {
@@ -7,8 +8,10 @@ const Footer = () => {
 
   return (
     <>
+      <BackToTopBtn />
+
       {/* フッター　テスト */}
-      <footer className="relative bg-gray-100 pt-8 pb-6">
+      <footer className="relative bg-gray-100 pt-8 pb-6 dark:bg-black">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap text-left lg:text-left">
             <div className="w-full lg:w-6/12 p-6">
@@ -35,9 +38,6 @@ const Footer = () => {
                     <li>
                       <Link href="/circle/schedule">スケジュール</Link>
                     </li>
-                    <li>
-                      <Link href="/contact">お問合せ</Link>
-                    </li>
                     {user && (
                       <li>
                         <Link href="/user/mypage">マイページ</Link>
@@ -55,12 +55,6 @@ const Footer = () => {
                     </li>
                     <li>
                       <Link href="/">プライバシーポリシー</Link>
-                    </li>
-                    <li>
-                      <Link href="/">サンプル</Link>
-                    </li>
-                    <li>
-                      <Link href="/">サンプル</Link>
                     </li>
                     <li>
                       <Link href="/">サンプル</Link>

@@ -2,11 +2,11 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -15,8 +15,21 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      body: [
+        "Hiragino Kaku Gothic ProN",
+        "ヒラギノ角ゴ ProN W3",
+        "YuGothic",
+        "Yu Gothic",
+        "sans-serif",
+      ],
+    },
     extend: {
+      fontSize: {
+        customFirstView: "clamp(3rem, 0.439rem + 10.9268vw, 10rem)",
+      },
       colors: {
+        customYellow: "#e7d475",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -73,4 +86,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
