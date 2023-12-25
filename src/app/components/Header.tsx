@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import SignIn from "../auth/SignIn";
-import SignUp from "../auth/SignUp";
-import useAuthCurrentUser from "../auth/useAuthCurrentUser";
-import { Button } from "../shadcn/ui/button";
+import SignIn from "./auth/SignIn";
+import SignUp from "./auth/SignUp";
+import useAuthCurrentUser from "./auth/useAuthCurrentUser";
+import { Button } from "./shadcn/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../shadcn/ui/dialog";
+} from "./shadcn/ui/dialog";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -21,7 +21,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "../shadcn/ui/navigation-menu";
+} from "./shadcn/ui/navigation-menu";
 
 const Header = () => {
   const user = useAuthCurrentUser();
@@ -45,7 +45,7 @@ const Header = () => {
 
               {/* サークル */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-base">
+                <NavigationMenuTrigger className="text-sm">
                   サークル
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="p-4">
@@ -70,6 +70,13 @@ const Header = () => {
                       スケジュール
                     </NavigationMenuLink>
                   </Link>
+                  <Link href="/circle/voice" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={`${navigationMenuTriggerStyle()} text-base`}
+                    >
+                      参加者の声
+                    </NavigationMenuLink>
+                  </Link>
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
@@ -90,9 +97,11 @@ const Header = () => {
                   <>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline">サインアップ</Button>
+                        <Button variant="outline" className="mr-3 px-2">
+                          サインアップ
+                        </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-md">
+                      <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
                           <DialogTitle>サインアップ</DialogTitle>
                           {/* <DialogDescription>
@@ -111,9 +120,11 @@ const Header = () => {
                     </Dialog>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline">サインイン</Button>
+                        <Button variant="outline" className="px-2">
+                          サインイン
+                        </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-md">
+                      <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
                           <DialogTitle>サインイン</DialogTitle>
                           {/* <DialogDescription>

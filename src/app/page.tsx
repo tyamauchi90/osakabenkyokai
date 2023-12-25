@@ -1,5 +1,5 @@
-import Link from "next/link";
-import EventList from "./articles/new/EventList";
+import { Suspense } from "react";
+import TopEventLists from "./circle/schedule/TopEventLists";
 
 export default async function Home() {
   // const [signInUser, setSignInUser] = useState<string | null>(null);
@@ -7,10 +7,12 @@ export default async function Home() {
   return (
     <>
       <section>
-        <div className="bg-yellow-50 p-10">
-          <Link href="/articles/new">記事を書く</Link>
-          <br />
-          <EventList />
+        <div className="py-10">
+          <Suspense
+            fallback={<p className="mt-4">最新スケジュール　Loading...</p>}
+          >
+            <TopEventLists />
+          </Suspense>
         </div>
       </section>
 

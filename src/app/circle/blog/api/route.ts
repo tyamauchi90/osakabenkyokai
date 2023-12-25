@@ -1,12 +1,14 @@
 import axios, { AxiosError } from "axios";
-import { FacebookPost } from "../../type/facebookPostType";
+import { NextRequest, NextResponse } from "next/server";
+import { FacebookPostType } from "../../../type/facebookPostType";
 
-export async function getFacebookPosts(): Promise<FacebookPost[]> {
+// GET
+export async function GET(req: NextRequest) {
   try {
     const accessToken = process.env.NEXT_PUBLIC_FACEBOOK_ACCESS_TOKEN;
-    const apiEndpoint = `https://graph.facebook.com/v18.0/me/posts?access_token=${accessToken}`;
-
-    let allPosts: FacebookPost[] = [];
+    const pageId = process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID;
+    const apiEndpoint = `https://graph.facebook.com/v18.0/${pageId}/feed?fields=message,created_time,full_picture,attachments{media,subattachments,image,src}`;
+    let allPosts: FacebookPostType[] = [];
     let next = apiEndpoint;
 
     while (next) {
@@ -15,9 +17,8 @@ export async function getFacebookPosts(): Promise<FacebookPost[]> {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
       const { data, paging } = response.data as {
-        data: FacebookPost[];
+        data: FacebookPostType[];
         paging: { next: string };
       };
       allPosts = allPosts.concat(data);
@@ -27,8 +28,7 @@ export async function getFacebookPosts(): Promise<FacebookPost[]> {
         break;
       }
     }
-
-    return allPosts;
+    return NextResponse.json(allPosts);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
@@ -43,7 +43,6 @@ export async function getFacebookPosts(): Promise<FacebookPost[]> {
     } else {
       console.error("Unknown Error: ", error);
     }
-
-    return []; // エラーが発生した場合、空の配列を返すか、適切なエラーハンドリングを行ってください。
+    return [];
   }
 }

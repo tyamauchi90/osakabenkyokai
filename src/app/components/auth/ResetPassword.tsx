@@ -1,14 +1,15 @@
-import React, { FC, MouseEvent } from "react";
+import { auth } from "@/firebase/client";
+import { FirebaseError } from "firebase/app";
 import {
   ActionCodeSettings,
   Auth,
-  sendPasswordResetEmail,
   User,
-} from "firebase/auth"; // User型をインポート
-import { auth } from "@/firebase/client";
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { FirebaseError } from "firebase/app";
-import PrimaryButton from "../atoms/button/PrimaryButton";
+import { FC, MouseEvent } from "react";
+import { useToast } from "../shadcn/ui/use-toast";
+import PrimaryButton from "../ui/button/PrimaryButton";
 
 interface ResetPasswordProps {
   firebaseAuth: Auth;
@@ -16,6 +17,7 @@ interface ResetPasswordProps {
 
 const ResetPassword: FC<ResetPasswordProps> = ({ firebaseAuth }) => {
   const router = useRouter();
+  const { toast } = useToast();
 
   const actionCodeSettings: ActionCodeSettings = {
     url: process.env.NEXT_PUBLIC_FIREBASE_MAIL_URL as string,
@@ -33,15 +35,16 @@ const ResetPassword: FC<ResetPasswordProps> = ({ firebaseAuth }) => {
   const handleResetPassword = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const user: User | null = auth.currentUser; // User型またはnullを許容するように型指定
+      const user: User | null = auth.currentUser;
       if (user) {
         await resetPassword(user.email!); // ユーザーのメールアドレスを指定
 
         router.push("/");
-        window.location.reload();
-        alert(
-          "再設定用のメールを送信しました。メールをご確認の上、パスワードを再設定してください。"
-        );
+        toast({
+          title: "パスワードリセット",
+          description:
+            "再設定用のメールを送信しました。メールをご確認の上、パスワードを再設定してください。",
+        });
       }
     } catch (e) {
       if (e instanceof FirebaseError) {

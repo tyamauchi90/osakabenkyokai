@@ -1,13 +1,9 @@
-import { useRouter } from "next/navigation";
 import { auth, db } from "@/firebase/client";
 import { FirebaseError } from "@firebase/util";
-import {
-  EmailAuthProvider,
-  deleteUser,
-  reauthenticateWithCredential,
-} from "firebase/auth";
+import { deleteUser } from "firebase/auth";
 import { deleteDoc, doc } from "firebase/firestore";
-import PrimaryButton from "../atoms/button/PrimaryButton";
+import { useRouter } from "next/navigation";
+import PrimaryButton from "../ui/button/PrimaryButton";
 
 const DeleteUser = () => {
   const router = useRouter();

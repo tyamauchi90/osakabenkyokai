@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Footer from "./components/organisms/Footer";
-import Header from "./components/organisms/Header";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import { Toaster } from "./components/shadcn/ui/toaster";
 import "./globals.css";
 import Loading from "./loading";
 import { Providers } from "./redux/Providers";
@@ -23,7 +24,10 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-          <Suspense fallback={<Loading />}>{children}</Suspense>
+          <div className="lg:container">
+            <Suspense fallback={<Loading />}>{children}</Suspense>
+            <Toaster />
+          </div>
           <Footer />
         </Providers>
       </body>
