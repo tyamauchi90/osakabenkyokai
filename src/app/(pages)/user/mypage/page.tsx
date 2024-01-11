@@ -23,12 +23,15 @@ const Mypage = () => {
   return (
     <>
       {user && (
-        <Tabs defaultValue="reservation" className="w-full mt-5 mb-10">
+        <Tabs
+          defaultValue="reservation"
+          className="w-full mt-5 mb-10 space-y-7 sm:space-y-12"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="reservation">予約一覧</TabsTrigger>
             <TabsTrigger value="account">アカウント</TabsTrigger>
           </TabsList>
-          <TabsContent value="reservation">
+          <TabsContent value="reservation" className="container">
             <Card>
               <CardHeader>
                 <CardTitle>予約一覧</CardTitle>
@@ -36,7 +39,7 @@ const Mypage = () => {
                   お申し込みいただいた勉強会の予約一覧です
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="w-full flex flex-wrap items-center justify-start gap-7">
                 <Reservation />
               </CardContent>
               <CardFooter></CardFooter>

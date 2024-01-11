@@ -64,6 +64,42 @@ const AfterPayTab: FC<IdType> = ({ id }) => {
 
         try {
           // const id = params.id;
+
+          // // 仮予約データが存在するかチェック
+          const _res = await fetch(`/circle/schedule/api/${id}/findUserId`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id,
+              user,
+              userName: formData.name,
+            }),
+          });
+
+          if (!_res.ok) {
+            const errorText = await _res.text(); // エラーの詳細を取得
+            console.error(
+              `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+            );
+            throw new Error("サーバーからの応答が正常ではありません。");
+          }
+
+          // overwriteの条件分岐
+          const _result = await _res.json();
+          const existingApplicationDocData = _result.existingApplicationDocData;
+          let overwrite = false;
+          if (_result.exists) {
+            overwrite = confirm("すでに仮予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
+            if (!overwrite) {
+              form.reset();
+              setLoading(false);
+              router.push(`/circle/schedule/${id}/`);
+              return;
+            }
+          }
+
           const res = await fetch(`/circle/schedule/api/${id}`, {
             method: "POST",
             headers: {
@@ -73,6 +109,8 @@ const AfterPayTab: FC<IdType> = ({ id }) => {
               id,
               user,
               userName: formData.name,
+              existingApplicationDocData,
+              overwrite,
             }),
           });
 

@@ -22,8 +22,8 @@ export const WhileInChildrenVariants = {
     scale: 1,
     transition: {
       when: "beforeChildren",
-      delayChildren: 0.4,
-      staggerChildren: 0.4,
+      // delayChildren: 0.6,
+      staggerChildren: 0.6,
       duration: 0.3,
     },
   },
@@ -39,8 +39,8 @@ export const WhileInListsVariants = {
     scale: 1,
     transition: {
       when: "beforeChildren",
-      delayChildren: 0.6,
-      staggerChildren: 0.6,
+      delayChildren: 0.5,
+      staggerChildren: 0.5,
       duration: 0.6,
     },
   },

@@ -70,10 +70,11 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
   const id = params.id;
   const router = useRouter();
   const { toast } = useToast();
-  const { formatTimestamp } = useTimestampFormatter();
+  const { getMonthAndDayAndWeekday } = useTimestampFormatter();
   const user = useAuthCurrentUser();
   const userRole = useUserRole(user ? user.uid : null);
 
+  const [canApply, setCanApply] = useState<boolean | null>(null);
   const [post, setPost] = useState<postType | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -99,6 +100,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
         if (res.data?.eventDate) {
           const date = new Date(res.data.eventDate.seconds * 1000);
           form.setValue("eventDate", date);
+          setCanApply(date > new Date());
         } else {
           form.setValue("eventDate", new Date());
         }
@@ -112,7 +114,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
 
   if (!post) {
     return (
-      <div className="container h-screen">
+      <div className="container h-screen my-7">
         <p>投稿取得中・・・</p>
         <LoadingSkelton />
       </div>
@@ -212,21 +214,24 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
   return (
     <>
       <div className="container my-10">
+        <h2 className="text-center text-2xl sm:text-4xl mb-7 tracking-widest">
+          スケジュール詳細
+        </h2>
         <Card className="w-full">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex flex-wrap-reverse items-center justify-between gap-7">
               {post.title}
-              <div className="flex gap-4">
+              <div className="w-full sm:w-auto flex justify-center gap-4 sm:gap7  pb-7 sm:pb-0 border-b sm:border-b-0">
                 {/* 編集ボタン */}
                 {(userRole === "admin" || userRole === "master") && (
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="default">編集</Button>
+                      <Button variant="default">編 集</Button>
                     </DialogTrigger>
-                    <DialogContent className="w-auto max-w-4xl max-h-screen my-5">
-                      <div className="overflow-y-auto max-h-screen">
+                    <DialogContent className="m-auto max-w-[90vw] max-h-[90vh] overflow-y-scroll break-words">
+                      <div className="w-[76vw] mx-auto my-[5vh]">
                         <DialogHeader>
-                          <DialogTitle>編集</DialogTitle>
+                          <DialogTitle>編 集</DialogTitle>
                         </DialogHeader>
                         {/* タイトル */}
                         <Form {...form}>
@@ -337,7 +342,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
                               {loading ? (
                                 <div className="animate-spin rounded-full border-t-2 border-r-2 border-b-2 border-white h-6 w-6"></div>
                               ) : (
-                                "更　新"
+                                "更 新"
                               )}
                             </Button>
                           </form>
@@ -358,14 +363,14 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
                 )}
 
                 {/* 申込みボタン */}
-                <ApplicationDialog post={post} id={id} />
+                {canApply && <ApplicationDialog post={post} id={id} />}
               </div>
             </CardTitle>
 
             {/* イベント日と本文 */}
             <CardDescription>
               イベント日:
-              {post.eventDate ? formatTimestamp(post.eventDate) : ""}
+              {post.eventDate ? getMonthAndDayAndWeekday(post.eventDate) : ""}
             </CardDescription>
           </CardHeader>
           <CardContent className="break-words">

@@ -73,7 +73,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
 
     fetchCheckoutSession();
   }, []);
-  console.log(id);
+  // console.log(id);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>

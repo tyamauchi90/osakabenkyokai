@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 import { LoadingSkelton } from "@/app/components/ui/LoadingSkelton";
 import useLatestPost from "@/app/swr/useLatestPost";
 import {
@@ -8,12 +8,16 @@ import {
   CardTitle,
 } from "../../../components/shadcn/ui/card";
 import ApplicationDialog from "./[id]/ApplicationDialog";
-import { useTimestampGetter } from "./useTimestampGetter";
+import { useTimestampFormatter } from "./useTimestampFormatter";
 
-function LatestEvent() {
+type PropsType = {
+  className?: string;
+};
+
+function LatestEvent({ className }: PropsType) {
   const { data: latestPost, error, isLoading, mutate } = useLatestPost();
 
-  const { formatTimestampWithWeekday } = useTimestampGetter();
+  const { getMonthAndDayAndWeekday } = useTimestampFormatter();
 
   return (
     <div>
@@ -25,24 +29,26 @@ function LatestEvent() {
         </div>
       )}
       {latestPost && (
-        <Card className="flex flex-col items-center m-10">
-          <CardHeader className="pb-0">
+        <Card
+          className={`max-w-[375px] flex flex-col items-center ${className}`}
+        >
+          <CardHeader className="pb-8">
             <CardTitle className="font-normal tracking-wide">
               {latestPost.title}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center text-4xl tracking-wider">
-            <img
-              className="w-[200px] h-[200px] -m-4"
-              src="./img/top/805.png"
-              alt="日程"
-            />
-            <div className="flex flex-col items-center">
-              <p className="border-b-4 border-customYellow pb-2 mb-4">
-                {latestPost.eventDate
-                  ? `${formatTimestampWithWeekday(latestPost.eventDate)}`
-                  : ""}
-              </p>
+          <CardContent className="text-center text-4xl tracking-wider">
+            <p className="border-b-4 border-customYellow pb-2 mb-4">
+              {latestPost.eventDate
+                ? `${getMonthAndDayAndWeekday(latestPost.eventDate)}`
+                : ""}
+            </p>
+            <div className="flex justify-center items-center">
+              <img
+                className="w-[180px] h-[180px] -m-8 -mr-4"
+                src="./img/top/805.png"
+                alt="日程"
+              />
 
               {/* 申込みボタン */}
               <ApplicationDialog post={latestPost} id={latestPost.id} />
@@ -64,7 +70,7 @@ export default LatestEvent;
               <CardDescription>
                 イベント日:
                 {latestPost.eventDate
-                  ? formatTimestamp(latestPost.eventDate)
+                  ? getMonthAndDayAndWeekday(latestPost.eventDate)
                   : ""}
               </CardDescription>
             </CardHeader>

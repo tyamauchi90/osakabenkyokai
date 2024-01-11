@@ -87,7 +87,7 @@ const FacebookCarousel = () => {
             wheelMinThreshold: 25,
             wheelSleep: 100,
             perPage: 3,
-            // pagination: false,
+            pagination: false,
             // arrows: false,
             lazyLoad: "nearby",
             preloadPages: 1,
@@ -177,16 +177,6 @@ const FacebookCarousel = () => {
                               <ScrollBar orientation="horizontal" />
                             </ScrollArea>
                           )}
-
-                        {/* {typeof imgUrls === "string" && (
-                          <div>
-                            <img
-                              className="w-full object-cover"
-                              src={imgUrls}
-                              alt="Facebook Post"
-                            />
-                          </div>
-                        )} */}
                       </DialogDescription>
                     )}
                     <DialogFooter className="sm:justify-center">
@@ -206,3 +196,4 @@ const FacebookCarousel = () => {
 };
 
 export default FacebookCarousel;
+

@@ -28,7 +28,7 @@ const BackToTopBtn: React.FC = () => {
 
   return (
     <div
-      className={`fixed bottom-4 right-4 z-50 w-14 h-14 text-xl text-white bg-gray-500 rounded-full p-3 shadow-lg transition-opacity duration-500 ease-in-out flex justify-center items-center cursor-pointer ${
+      className={`fixed bottom-4 right-4 z-50 w-10 sm:w-14 h-10 sm:h-14 text-xl text-white bg-gray-500 rounded-full p-3 shadow-lg transition-opacity duration-500 ease-in-out flex justify-center items-center cursor-pointer ${
         isActive ? "visible" : "invisible"
       }`}
       onClick={scrollToTop}

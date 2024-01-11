@@ -2,7 +2,7 @@ import { motion, useAnimation } from "framer-motion";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { WhileInChildrenVariants } from "../variants";
+import { WhileInChildrenVariants } from "../(pages)/variants";
 
 type PropsType = {
   className?: string;
@@ -10,27 +10,51 @@ type PropsType = {
 
 export const WhileInWorry = ({ className }: PropsType) => {
   const controls = useAnimation();
+  const textControls = useAnimation();
   const [ref, inView] = useInView();
 
   useEffect(() => {
     if (inView) {
-      controls.start("enter");
+      Promise.all([controls.start("enter"), textControls.start("visible")]);
     }
-  }, [controls, inView]);
+  }, [controls, inView, textControls]);
+
+  const spanVariants = {
+    hidden: { opacity: 0, y: 50, rotate: 60 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      rotate: 0,
+      transition: {
+        type: "spring",
+        stiffness: 80,
+        damping: 5,
+        duration: 3,
+      },
+    },
+  };
 
   return (
     <motion.div
       className={className}
       ref={ref}
-      variants={WhileInChildrenVariants}
       initial="start"
       animate={controls}
+      variants={WhileInChildrenVariants}
     >
       <motion.div className="min-w-[400px]" variants={WhileInChildrenVariants}>
         <div className="bg-gray-100 p-7 rounded">
           <p className="leading-loose text-center">
             もっと
-            <span className="text-2xl text-yellow-500 mx-1">視野</span>
+            <motion.span
+              ref={ref}
+              initial="hidden"
+              animate={textControls}
+              variants={spanVariants}
+              className="inline-block text-2xl text-yellow-500 mx-1"
+            >
+              視野
+            </motion.span>
             を広げたい
             <br />
             幅広い教養を身につけたい
@@ -49,7 +73,15 @@ export const WhileInWorry = ({ className }: PropsType) => {
         <div className="bg-gray-100 p-7 rounded">
           <p className="leading-loose text-center">
             異業種の人と
-            <span className="text-2xl text-yellow-500 mx-1">交流</span>
+            <motion.span
+              ref={ref}
+              initial="hidden"
+              animate={textControls}
+              variants={spanVariants}
+              className="inline-block text-2xl text-yellow-500 mx-1"
+            >
+              交流
+            </motion.span>
             したい
             <br />
             コミュニケーション力を磨きたい
@@ -70,7 +102,15 @@ export const WhileInWorry = ({ className }: PropsType) => {
             このままでいいのか・・・
             <br />
             人生を変える
-            <span className="text-2xl text-yellow-500 mx-1">きっかけ</span>
+            <motion.span
+              ref={ref}
+              initial="hidden"
+              animate={textControls}
+              variants={spanVariants}
+              className="inline-block text-2xl text-yellow-500 mx-1"
+            >
+              きっかけ
+            </motion.span>
             が欲しい
           </p>
         </div>

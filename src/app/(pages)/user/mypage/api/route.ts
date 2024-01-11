@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { firebaseAdmin } from "../../../../../firebase/admin";
 
 type DocType = {
@@ -64,6 +64,34 @@ export async function GET(req: NextRequest) {
       headers: {
         "Content-Type": "application/json",
       },
+    });
+  }
+}
+
+// キャンセル
+export async function DELETE(req: NextRequest) {
+  const request = await req.json();
+  const { postId, userId } = request;
+
+  try {
+    const postRef = firebaseAdmin.firestore().collection("posts").doc(postId);
+    const appsSnapshot = await postRef
+      .collection("applications")
+      .where("postId", "==", postId)
+      .where("userId", "==", userId)
+      .get();
+
+    // キャンセル処理
+    if (!appsSnapshot.empty) {
+      appsSnapshot.docs[0].ref.delete();
+    }
+    return NextResponse.json({
+      message: "Reservation cancelled successfully.",
+    });
+  } catch (error) {
+    console.error("Error Deleting reservation:", error);
+    return NextResponse.json({
+      error: "申込みをキャンセルすることができませんでした。",
     });
   }
 }

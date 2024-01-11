@@ -9,10 +9,18 @@ import "./globals.css";
 import Loading from "./loading";
 // import { Provider } from "react-redux";
 // import { store } from "./redux/store";
+import HeaderSp from "../components/HeaderSp";
+import Favicon from "/public/img/top/favicon.ico";
 
 export const metadata: Metadata = {
   title: "おおさか勉強会",
   description: "おおさか勉強会のWebサイトです",
+  icons: [
+    {
+      rel: "icon",
+      url: Favicon.src,
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -22,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="font-body">
+      <body className="font-body overflow-x-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -31,6 +39,7 @@ export default function RootLayout({
         >
           <Providers>
             <Header />
+            <HeaderSp />
             <Suspense fallback={<Loading />}>{children}</Suspense>
             <Toaster />
             <Footer />

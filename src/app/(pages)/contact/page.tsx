@@ -87,8 +87,10 @@ const ContactPage = () => {
   };
 
   return (
-    <WhileInDiv className="w-full max-w-5xl mx-auto my-10">
-      <h1 className="text-5xl text-center mb-10">お問い合わせ</h1>
+    <WhileInDiv className="container w-full sm:max-w-5xl p-4 mx-auto sm:my-10">
+      <h1 className="text-2xl sm:text-5xl text-center mb-16 sm:mb-20">
+        お問い合わせ
+      </h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* 名前 */}

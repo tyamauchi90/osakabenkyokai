@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { Timestamp, addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { Timestamp, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../../firebase/client";
 import { postType } from "../../../../../type/postType";
@@ -41,83 +41,136 @@ export async function GET(
 }
 
 // POST : 仮予約
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const request = await req.json();
-    const { id, user, userName } = request;
+    const { id, user, userName, existingApplicationDocData, overwrite } =
+      request;
 
     if (!id) {
       console.error("IDが未定義です。");
-      return;
+      return new NextResponse(JSON.stringify({ error: "IDが未定義です。" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (!user) {
       console.error("ユーザーが存在しません。");
-      return;
+      return new NextResponse(
+        JSON.stringify({ error: "ユーザーが存在しません。" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    const addData = async function (id: string, user: User, userName: string) {
+    // if (!overwrite) {
+    //   console.error("処理を中止しました");
+    //   return new NextResponse(JSON.stringify({ error: "処理を中止しました" }), {
+    //     status: 400,
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    // }
+
+    const addData = async function (
+      id: string,
+      user: User,
+      userName: string,
+      existingApplicationDocData: any,
+      overwrite: boolean
+    ) {
       const postRef = doc(db, "posts", id);
       const postSnapshot = await getDoc(postRef);
       const postEventData = postSnapshot.data();
 
       const applicationData = {
+        postId: id,
         eventDate: postEventData?.eventDate || null,
         userId: user?.uid,
         userName: userName,
         applyDate: Timestamp.now(),
         isPaid: false,
       };
+
       const applicationRef = collection(postRef, "applications");
-      await addDoc(applicationRef, applicationData);
+
+      try {
+        if (existingApplicationDocData && overwrite) {
+          // データが存在し、上書きが許可されている場合、上書き
+          const existingApplicationRef = doc(applicationRef, user.uid);
+          await setDoc(existingApplicationRef, applicationData);
+        } else if (!existingApplicationDocData) {
+          // データが存在しない場合、新規登録
+          const newApplicationRef = doc(applicationRef, user.uid);
+          await setDoc(newApplicationRef, applicationData);
+        } else {
+          // existingApplicationDocData が undefined の場合のエラーハンドリング
+          console.error("existingApplicationDocData is undefined");
+          throw new Error("existingApplicationDocData is undefined");
+        }
+
+        return new NextResponse(
+          JSON.stringify({ message: "Form data received" }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      } catch (error: any) {
+        console.error(error.message || error);
+        return new NextResponse(
+          JSON.stringify({
+            error: "ポスト処理が異常終了しました。",
+          }),
+          {
+            status: 500,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
     };
-    await addData(id, user, userName);
-    return new NextResponse(JSON.stringify({ message: "Form data received" }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+
+    return await addData(
+      id,
+      user,
+      userName,
+      existingApplicationDocData,
+      overwrite
+    );
   } catch (error: any) {
     console.error(error.message || error);
-    return NextResponse.json({
-      error: "ポスト処理が異常終了しました。",
-    });
+    return new NextResponse(
+      JSON.stringify({
+        error: "ポスト処理が異常終了しました。",
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 }
 
-// // 申込み処理
-// const stripePromise = loadStripe("ここにStripeの公開鍵を入力してください"); // Stripeの初期化
-// async function handleApply(pay: boolean) {
-//   const user = useAuthCurrentUser();
-//   const userId = user?.uid;
+// // キャンセル
+// export async function DELETE(req: NextRequest) {
+//   const request = await req.json();
+//   const { id, userId } = request.query;
 
-//   if (pay) {
-//     // Stripeを使用して決済を行う
-//     const stripe = await stripePromise;
-//     const { error } = await stripe.redirectToCheckout({
-//       // ここにStripe Checkoutの設定を入力してください
+//   try {
+//     const postRef = doc(db, "posts", id as string);
+//     const applicationRef = collection(postRef, "applications");
+//     const reservedApplicationRef = doc(applicationRef, userId as string);
+
+//     // キャンセル処理
+//     await deleteDoc(reservedApplicationRef);
+
+//     return NextResponse.json({
+//       message: "Reservation cancelled successfully.",
 //     });
-
-//     if (error) {
-//       console.error(error);
-//     } else {
-//       // 決済が成功したらFirestoreに申込み情報を登録する
-//       const applicationRef = doc(
-//         collection(db, `posts/${id}/applications`)
-//       );
-//       await setDoc(applicationRef, {
-//         userId: userId,
-//         applicationDate: new Date().toISOString(),
-//       });
-//     }
-//   } else {
-//     // 決済せずにFirestoreに申込み情報を登録する
-//     const applicationRef = doc(collection(db, `posts/${id}/applications`));
-//     await setDoc(applicationRef, {
-//       userId: userId,
-//       applicationDate: new Date().toISOString(),
+//   } catch (error) {
+//     console.error("Error Deleting reservation:", error);
+//     return NextResponse.json({
+//       error: "申込みをキャンセルすることができませんでした。",
 //     });
 //   }
 // }
-// handleApply(pay);

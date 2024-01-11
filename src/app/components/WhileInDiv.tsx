@@ -1,7 +1,7 @@
 import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { WhileInVariants } from "../variants";
+import { WhileInVariants } from "../(pages)/variants";
 
 type PropsType = {
   className?: string;

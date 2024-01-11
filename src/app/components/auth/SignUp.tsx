@@ -134,7 +134,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="max-w-lg mx-auto overflow-y-scroll ">
       <h2 className="text-2xl font-semibold mb-4">アカウント登録</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

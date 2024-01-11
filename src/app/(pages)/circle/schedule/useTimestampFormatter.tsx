@@ -1,41 +1,66 @@
-// import { Timestamp } from "firebase/firestore";
-
-// export const useTimestampFormatter = () => {
-//   const convertTimestampToDate = (timestamp: Timestamp) => {
-//     // FirestoreのTimestamp型をJavaScriptのDate型に変換
-//     return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
-//   };
-
-//   const formatTimestamp = (timestamp: Timestamp) => {
-//     const date = convertTimestampToDate(timestamp);
-//     const options = {
-//       year: "numeric",
-//       month: "2-digit",
-//       day: "2-digit",
-//       weekday: "short",
-//       timeZone: "Asia/Tokyo", // タイムゾーンを設定
-//     } as Intl.DateTimeFormatOptions;
-//     return date.toLocaleDateString("ja-JP", options);
-//   };
-
-//   return { formatTimestamp };
-// };
-
-import { format } from "date-fns";
-import { ja } from "date-fns/locale";
 import { Timestamp } from "firebase/firestore";
 
 export const useTimestampFormatter = () => {
   const convertTimestampToDate = (timestamp: Timestamp) => {
-    // FirestoreのTimestamp型をJavaScriptのDate型に変換
-    return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1e6);
+    const seconds =
+      "seconds" in timestamp ? timestamp.seconds : timestamp._seconds; // ToDo:_secondsになる理由がわからない
+    // return new Date(seconds * 1000 + timestamp.nanoseconds / 1e6);
+    return new Date(seconds * 1000);
   };
 
-  const formatTimestamp = (timestamp: Timestamp) => {
+  const getDate = (timestamp: Timestamp) => {
     const date = convertTimestampToDate(timestamp);
-    // date-fnsを使用して日付をフォーマット
-    return format(date, "yyyy/MM/dd EEEE", { locale: ja });
+    return date.toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
   };
 
-  return { formatTimestamp };
+  const getMonthAndDay = (timestamp: Timestamp) => {
+    const date = convertTimestampToDate(timestamp);
+    return date.toLocaleDateString("ja-JP", {
+      month: "numeric",
+      day: "numeric",
+    });
+  };
+
+  const getMonthAndDayAndWeekday = (timestamp: Timestamp) => {
+    const date = convertTimestampToDate(timestamp);
+    return date.toLocaleDateString("ja-JP", {
+      month: "numeric",
+      day: "numeric",
+      weekday: "short",
+    });
+  };
+
+  const getYear = (timestamp: Timestamp) => {
+    const date = convertTimestampToDate(timestamp);
+    return date.toLocaleDateString("ja-JP", { year: "numeric" });
+  };
+
+  const getMonth = (timestamp: Timestamp) => {
+    const date = convertTimestampToDate(timestamp);
+    return date.toLocaleDateString("ja-JP", { month: "numeric" });
+  };
+
+  const getDay = (timestamp: Timestamp) => {
+    const date = convertTimestampToDate(timestamp);
+    return date.toLocaleDateString("ja-JP", { day: "numeric" });
+  };
+
+  const getWeekday = (timestamp: Timestamp) => {
+    const date = convertTimestampToDate(timestamp);
+    return date.toLocaleDateString("ja-JP", { weekday: "short" });
+  };
+
+  return {
+    getDate,
+    getMonthAndDay,
+    getMonthAndDayAndWeekday,
+    getYear,
+    getMonth,
+    getDay,
+    getWeekday,
+  };
 };

@@ -4,9 +4,9 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useTimestampFormatter } from "../(pages)/circle/schedule/useTimestampFormatter";
+import { WhileInListsVariants } from "../(pages)/variants";
 import useAllPosts from "../swr/useAllPosts";
 import { postType } from "../type/postType";
-import { WhileInListsVariants } from "../variants";
 import {
   Card,
   CardContent,
@@ -23,7 +23,7 @@ type PropsType = {
 export const WhileInEventLists = ({ className }: PropsType) => {
   const controls = useAnimation();
   const { ref, inView } = useInView();
-  const { formatTimestamp } = useTimestampFormatter();
+  const { getMonthAndDayAndWeekday } = useTimestampFormatter();
   const { data: posts, error, isLoading } = useAllPosts();
 
   useEffect(() => {
@@ -37,13 +37,13 @@ export const WhileInEventLists = ({ className }: PropsType) => {
       <div className="container">
         {error && <div>Error loading data</div>}
         {isLoading && (
-          <div className="w-full h-screen m-7">
+          <div className="w-full h-screen sm:m-7">
             <p>Loading・・・</p>
             <LoadingSkelton />
           </div>
         )}
         <motion.ul
-          className={className}
+          className={`space-y-12 ${className}`}
           ref={ref}
           variants={WhileInListsVariants}
           initial="start"
@@ -76,7 +76,7 @@ export const WhileInEventLists = ({ className }: PropsType) => {
               return (
                 <motion.li
                   key={post.id}
-                  className="w-fll my-7"
+                  className="w-fll"
                   variants={WhileInListsVariants}
                 >
                   <Link href={`/circle/schedule/${post.id}`}>
@@ -86,7 +86,7 @@ export const WhileInEventLists = ({ className }: PropsType) => {
                         <CardDescription>
                           イベント日:
                           {post.eventDate
-                            ? formatTimestamp(post.eventDate)
+                            ? getMonthAndDayAndWeekday(post.eventDate)
                             : ""}
                         </CardDescription>
                       </CardHeader>

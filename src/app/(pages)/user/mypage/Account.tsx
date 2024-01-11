@@ -19,15 +19,15 @@ const Account = () => {
 
   return (
     <>
-      <Card className="p-5 max-w-lg space-y-7 mb-10">
+      <Card className="break-words p-5 mb-10 max-w-lg space-y-7 shadow-md">
         {user?.emailVerified ? (
           <p>サインイン中です！</p>
         ) : (
           <p>まだ認証が済んでいません。メールをご確認ください</p>
         )}
-        <p>【表示名】　{user?.displayName}</p>
-        <p>【uid】　{user?.uid}</p>
-        <p>【email】{user?.email}</p>
+        <p>【表示名】{user?.displayName}</p>
+        <p>【ユーザーID】{user?.uid}</p>
+        <p>【メールアドレス】{user?.email}</p>
         {user?.photoURL ? (
           <img src={user.photoURL} alt="ユーザーのプロフィール画像" />
         ) : null}
@@ -50,13 +50,31 @@ const Account = () => {
         <AccordionItem value="item-3">
           <AccordionTrigger>パスワードをリセットしたい</AccordionTrigger>
           <AccordionContent>
-            <ResetPassword firebaseAuth={auth} />
+            <div className="py-4 max-w-md mx-auto text-justify leading-loose">
+              <p className="text-lg">（リセット後の手順）</p>
+              <ul className="list-decimal pt-4 mx-5">
+                <li>「パスワードをリセット」ボタンを押す</li>
+                <li>
+                  {user?.displayName}
+                  様のメールアドレスに、確認のメールアドレスが届きます
+                </li>
+                <li>記載されたリセット用のリンクをクリックします</li>
+                <li>パスワードの再設定画面で、新しいパスワードを設定します</li>
+              </ul>
+              <ResetPassword firebaseAuth={auth} />
+            </div>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-4">
           <AccordionTrigger>退会したい</AccordionTrigger>
           <AccordionContent>
-            <DeleteUser />
+            <div className="py-4 max-w-md mx-auto text-justify leading-loose">
+              <p>（注意）</p>
+              <p>
+                一度退会するとデータを復元することはできませんので、慎重にご検討ください
+              </p>
+              <DeleteUser />
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
