@@ -2,11 +2,11 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -15,8 +15,38 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    fontFamily: {
+      body: [
+        "Hiragino Kaku Gothic ProN",
+        "ヒラギノ角ゴ ProN W3",
+        "YuGothic",
+        "Yu Gothic",
+        "sans-serif",
+      ],
+    },
     extend: {
+      fontSize: {
+        customMainvisualText: "clamp(1.875rem, 0.732rem + 4.878vw, 5rem)",
+        customMainvisualCircleName: "clamp(1.125rem, 0.439rem + 2.927vw, 3rem)",
+      },
+      width: {
+        customMainvisual: "clamp(23.438rem, 11.433rem + 51.22vw, 56.25rem)",
+        customMainvisualReservation:
+          "clamp(1.125rem, 0.439rem + 2.927vw, 3rem)",
+        customMainvisualPencil: "clamp(2rem, 0.674rem + 5.659vw, 5.625rem)",
+        customAccordion: "clamp(20rem, -1.226rem + 90.566vw, 35rem)",
+        customFlow: "clamp(23.438rem, 19.097rem + 18.519vw, 28.125rem)",
+        customFlowImg: "clamp(10rem, 4.792rem + 22.222vw, 15.625rem);",
+      },
+      height: {
+        customMainvisual: "clamp(23.438rem, 11.433rem + 51.22vw, 56.25rem)",
+        customMainvisualReservation:
+          "clamp(1.125rem, 0.439rem + 2.927vw, 3rem)",
+        customMainvisualPencil: "clamp(2rem, 0.674rem + 5.659vw, 5.625rem)",
+        customFlowImg: "clamp(10rem, 4.792rem + 22.222vw, 15.625rem);",
+      },
       colors: {
+        customYellow: "#e7d475",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -73,4 +103,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

@@ -26,3 +26,8 @@ type SubAttachment = {
     };
   };
 };
+
+export type SelectedFacebookPostType = FacebookPostType & {
+  formattedDate: string;
+  imgUrls?: string[];
+};

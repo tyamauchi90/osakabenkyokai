@@ -41,7 +41,7 @@ const DeleteUser = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto my-7">
       <div className="mb-4">
         <PrimaryButton handleClick={handleDeleteUser}>退会する</PrimaryButton>
       </div>

@@ -1,12 +1,13 @@
 import { auth, db } from "@/firebase/client";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FirebaseError } from "firebase/app";
 import { updateProfile } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "../shadcn/ui/button";
 import {
   Form,
   FormControl,
@@ -17,7 +18,6 @@ import {
   FormMessage,
 } from "../shadcn/ui/form";
 import { Input } from "../shadcn/ui/input";
-import { Button } from "../shadcn/ui/button";
 
 const formSchema = z.object({
   username: z
@@ -73,7 +73,7 @@ const UpdateUsername = () => {
             });
           }
           router.push("/");
-          window.location.reload();
+          router.refresh();
           alert("表示名を変更しました");
         } catch (e) {
           if (e instanceof FirebaseError) {
@@ -88,10 +88,7 @@ const UpdateUsername = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <h2 className="bg-gradient-to-r from-yellow-100 px-2 py-4 rounded">
-        ユーザー名を変更する
-      </h2>
+    <div className="max-w-md mx-auto my-7">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

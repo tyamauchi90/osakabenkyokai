@@ -3,6 +3,7 @@ import Link from "next/link";
 import SignIn from "./auth/SignIn";
 import SignUp from "./auth/SignUp";
 import useAuthCurrentUser from "./auth/useAuthCurrentUser";
+import useUserRole from "./auth/useUserRole";
 import { Button } from "./shadcn/ui/button";
 import {
   Dialog,
@@ -15,84 +16,57 @@ import {
 } from "./shadcn/ui/dialog";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./shadcn/ui/navigation-menu";
 
 const Header = () => {
   const user = useAuthCurrentUser();
-
+  const userRole = useUserRole(user ? user.uid : null);
+  
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white w-full h-20">
-        <div className="flex items-center justify-end m-2 p-4">
-          <NavigationMenu className="justify-end max-w-fit">
+      <header className="hidden md:block sticky top-0 z-50 bg-white w-full dark:bg-black">
+        <div className="flex items-center justify-between px-4">
+          {/* トップ */}
+          <div>
+            <Link href="/">
+              <img
+                src="/img/top/logo.png"
+                alt="ロゴ"
+                className="inline-block w-16 h-16"
+              />
+              {/* <span>おおさか勉強会</span> */}
+            </Link>
+          </div>
+          <NavigationMenu className="justify-end md:max-w-fit">
             <NavigationMenuList>
-              {/* トップ */}
+              {/* ブログ */}
               <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
+                <Link href="/circle/blog" legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} text-base`}
+                    className={`${navigationMenuTriggerStyle()} `}
                   >
-                    おおさか勉強会トップ
+                    ブログ
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
 
-              {/* サークル */}
+              {/* スケジュール */}
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-sm">
-                  サークル
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="p-4">
-                  <Link href="/circle/about" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} text-base`}
-                    >
-                      サークル紹介
-                    </NavigationMenuLink>
-                  </Link>
-                  <Link href="/circle/blog" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} text-base`}
-                    >
-                      ブログ
-                    </NavigationMenuLink>
-                  </Link>
-                  <Link href="/circle/schedule" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} text-base`}
-                    >
-                      スケジュール
-                    </NavigationMenuLink>
-                  </Link>
-                  <Link href="/circle/voice" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} text-base`}
-                    >
-                      参加者の声
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              {/* お問合せ */}
-              <NavigationMenuItem>
-                <Link href="/contact" legacyBehavior passHref>
+                <Link href="/circle/schedule" legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} text-base`}
+                    className={`${navigationMenuTriggerStyle()} `}
                   >
-                    お問合せ
+                    スケジュール
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
 
               {/* マイページ */}
-              <NavigationMenuItem className="text-base">
+              <NavigationMenuItem className="">
                 {!user ? (
                   <>
                     <Dialog>
@@ -127,17 +101,10 @@ const Header = () => {
                       <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
                           <DialogTitle>サインイン</DialogTitle>
-                          {/* <DialogDescription>
-                    （サインインをします）
-                  </DialogDescription> */}
                         </DialogHeader>
                         <SignIn />
                         <DialogFooter className="sm:justify-start">
-                          <DialogClose asChild>
-                            {/* <Button type="button" variant="secondary">
-                      Close
-                    </Button> */}
-                          </DialogClose>
+                          <DialogClose asChild></DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
@@ -145,13 +112,30 @@ const Header = () => {
                 ) : (
                   <Link href="/user/mypage" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} text-base`}
+                      className={`${navigationMenuTriggerStyle()} `}
                     >
                       マイページ
                     </NavigationMenuLink>
                   </Link>
                 )}
               </NavigationMenuItem>
+
+              {/* 管理者ページ */}
+              {(userRole === "admin" || userRole === "master") && (
+                <NavigationMenuItem>
+                  <Link href="/admin" legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={`${navigationMenuTriggerStyle()} `}
+                    >
+                      管理者ページ
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              )}
+              {/* Darkモード */}
+              {/* <NavigationMenuItem>
+                <ModeToggle />
+              </NavigationMenuItem> */}
             </NavigationMenuList>
           </NavigationMenu>
         </div>

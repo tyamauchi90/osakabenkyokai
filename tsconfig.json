@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -23,9 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "forceConsistentCasingInFileNames": true
   },
@@ -37,9 +31,8 @@
     "**/**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/components/auth/useAuthCurrentUser.ts",
-    "src/app/components/shadcn/ui/use-toast.ts"
+    "src/app/components/shadcn/ui/use-toast.ts",
+    "src/app/stripe/checkOutForm.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
+"use client";
 import { auth } from "@/firebase/client";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
 
 const useAuthCurrentUser = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
