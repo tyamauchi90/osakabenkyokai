@@ -6,11 +6,11 @@ import { db } from "../../../../firebase/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
 // POST : 本予約
 export async function POST(req: NextRequest) {
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   let event;
 
   console.log(sig);
-  
+
   try {
     if (!sig) {
       throw new Error("No signature provided");
