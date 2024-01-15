@@ -41,7 +41,6 @@ import Separator from "./Separator";
 import WorryCard from "./WorryCard";
 import FacebookCarousel from "./circle/schedule/FacebookCarousel";
 import LatestEvent from "./circle/schedule/LatestEvent";
-import ContactPage from "./contact/page";
 
 export default function Home() {
   const startYear = 2010;
@@ -493,9 +492,9 @@ export default function Home() {
           <hr className="w-full md:max-w-[780px] mx-auto sm:my-7 border-customYellow" />
         </WhileInDiv>
       </section>
-      <section>
+      {/* <section>
         <ContactPage />
-      </section>
+      </section> */}
     </>
   );
 }

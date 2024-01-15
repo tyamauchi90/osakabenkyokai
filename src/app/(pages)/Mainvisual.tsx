@@ -150,7 +150,7 @@ const Mainvisual = () => {
 
   return (
     <>
-      <div className="relative w-full h-customMainvisual">
+      <div className="max-w-[1400px] mx-auto relative w-full h-customMainvisual">
         <motion.div
           className="absolute top-0 right-0 w-full md:w-customMainvisual h-full md:h-customMainvisual overflow-hidden rounded-l-[100px]"
           variants={imageVariants}
