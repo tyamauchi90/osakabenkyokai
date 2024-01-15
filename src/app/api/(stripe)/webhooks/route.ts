@@ -6,7 +6,7 @@ import { db } from "../../../../firebase/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// export const config = {
+// export const routeConfig = {
 //   api: {
 //     bodyParser: false,
 //   },

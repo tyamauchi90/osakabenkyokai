@@ -123,7 +123,7 @@ const FacebookCarousel = () => {
         >
           {posts?.map((post) => {
             return (
-              <Dialog>
+              <Dialog key={post.id}>
                 <DialogTrigger asChild>
                   <SplideSlide
                     key={post.id}
@@ -196,4 +196,3 @@ const FacebookCarousel = () => {
 };
 
 export default FacebookCarousel;
-
