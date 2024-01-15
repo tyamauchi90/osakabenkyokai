@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { Toaster } from "../components/shadcn/ui/toaster";
-import { ThemeProvider } from "../components/theme/theme-provider";
+// import { ThemeProvider } from "../components/theme/theme-provider";
 import { Providers } from "../redux/Providers";
 import "./globals.css";
 import Loading from "./loading";
@@ -31,20 +31,20 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="font-body overflow-x-hidden">
-        <ThemeProvider
+        {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        >
-          <Providers>
-            <Header />
-            <HeaderSp />
-            <Suspense fallback={<Loading />}>{children}</Suspense>
-            <Toaster />
-            <Footer />
-          </Providers>
-        </ThemeProvider>
+        > */}
+        <Providers>
+          <Header />
+          <HeaderSp />
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+          <Toaster />
+          <Footer />
+        </Providers>
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );

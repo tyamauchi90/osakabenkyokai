@@ -213,8 +213,8 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <>
-      <div className="container my-10">
-        <h2 className="text-center text-2xl sm:text-4xl mb-7 tracking-widest">
+      <div className="container my-12">
+        <h2 className="text-center text-2xl sm:text-4xl mb-12 tracking-widest">
           スケジュール詳細
         </h2>
         <Card className="w-full">

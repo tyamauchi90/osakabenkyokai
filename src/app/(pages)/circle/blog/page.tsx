@@ -22,6 +22,7 @@ import { LoadingSkelton } from "@/app/components/ui/LoadingSkelton";
 import useAllFacebookPosts from "@/app/swr/useAllFacebookPosts";
 import type { SelectedFacebookPostType } from "@/app/type/facebookPostType";
 import { motion, useAnimation } from "framer-motion";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { WhileInListsVariants } from "../../variants";
@@ -77,8 +78,8 @@ const BlogPage = () => {
         </div>
       )}
 
-      <div className="container my-10">
-        <h2 className="text-center text-2xl sm:text-4xl mb-7 tracking-widest">
+      <div className="container my-12">
+        <h2 className="text-center text-2xl sm:text-4xl mb-12 tracking-widest">
           ブログ一覧
         </h2>
         <motion.ul
@@ -97,7 +98,7 @@ const BlogPage = () => {
               limitedMessage =
                 post.message.length > 100 ? (
                   <>
-                    {post.message.slice(0, 100)}
+                    {post.message.slice(0, 200)}
                     <span> ...... </span>
                     <span className="text-sm text-gray-400">
                       （続きを読む）
@@ -124,18 +125,22 @@ const BlogPage = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <Card className="lg:flex lg:items-start w-full py-[5vh] text-center break-words">
-                      <CardHeader className="lg:py-0">
-                        {post.full_picture && (
-                          <div className="lg:w-[320px] mx-auto">
-                            <img
-                              className="object-cover"
-                              src={post.full_picture}
-                              alt={`Facebook Post${post.formattedDate}`}
-                            />
-                          </div>
-                        )}
+                      <CardHeader className="pt-0 px-0 lg:py-0 lg:px-6">
+                        <div className="lg:w-[30vw] mx-auto">
+                          {post.full_picture && (
+                            <div className="relative w-[50vw] lg:w-[30vw] h-[50vw] lg:h-[30vw]">
+                              <Image
+                                fill
+                                placeholder="empty"
+                                className="object-cover"
+                                src={post.full_picture}
+                                alt={`Facebook Post${post.formattedDate}`}
+                              />
+                            </div>
+                          )}
+                        </div>
                       </CardHeader>
-                      <CardContent className="lg:flex-1 text-lg mb-4">
+                      <CardContent className="py-0 lg:w-[50vw] lg:flex-1 text-lg mb-4">
                         <CardTitle>
                           <CardDescription>
                             {post.formattedDate}
@@ -153,14 +158,20 @@ const BlogPage = () => {
                           Array.isArray(selectedPost.imgUrls) &&
                           selectedPost.imgUrls.length > 0 && (
                             <ScrollArea className="w-[85vw] whitespace-nowrap">
-                              <div className="flex justify-center">
-                                {selectedPost.imgUrls.map((imgurl, index) => (
-                                  <img
-                                    className="max-w-xs object-cover mx-auto mb-8"
-                                    key={index}
-                                    src={imgurl}
-                                    alt={`Image ${index}`}
-                                  />
+                              <div className="flex justify-center gap-4">
+                                {selectedPost.imgUrls.map((imgurl) => (
+                                  <div
+                                    key={selectedPost.id}
+                                    className="relative w-[50vw] lg:w-[30vw] h-[50vw] lg:h-[30vw]"
+                                  >
+                                    <Image
+                                      fill
+                                      placeholder="empty"
+                                      className="object-cover mx-auto mb-8"
+                                      src={imgurl}
+                                      alt={`Image ${selectedPost.created_time}`}
+                                    />
+                                  </div>
                                 ))}
                               </div>
                               <ScrollBar orientation="horizontal" />

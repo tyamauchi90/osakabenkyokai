@@ -1,5 +1,6 @@
 import { easeIn, motion, useAnimation } from "framer-motion";
 import { BookOpenCheck } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   Popover,
@@ -157,9 +158,11 @@ const Mainvisual = () => {
           initial="hidden"
           animate="visible"
         >
-          <div className="w-full h-full">
+          <div className="relative w-full h-full">
             {images.map((image, index) => (
-              <img
+              <Image
+                fill
+                placeholder="empty"
                 key={index}
                 src={image}
                 alt={`Slide ${index + 1}`}

@@ -7,6 +7,7 @@ import {
   Pencil,
   UserPlus,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import SignIn from "./auth/SignIn";
 import SignUp from "./auth/SignUp";
@@ -36,11 +37,12 @@ const Header = () => {
   return (
     <>
       <header className="hidden md:block sticky top-0 z-50 bg-white w-full dark:bg-black">
-        <div className="flex items-center justify-between px-4">
+        <div className="flex items-center justify-between py-2 px-4">
           {/* トップ */}
-          <div>
+          <div className="relative w-12 h-12">
             <Link href="/">
-              <img
+              <Image
+                fill
                 src="/img/top/logo.png"
                 alt="ロゴ"
                 className="inline-block w-16 h-16"
