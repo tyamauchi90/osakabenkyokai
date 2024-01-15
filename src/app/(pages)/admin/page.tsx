@@ -64,7 +64,7 @@ const AdminPage = () => {
               <CardFooter></CardFooter>
             </Card>
           </TabsContent>
-          <TabsContent value="create">
+          <TabsContent value="create" className="container">
             <Card>
               <CardHeader>
                 <CardTitle>イベント作成</CardTitle>
@@ -76,7 +76,7 @@ const AdminPage = () => {
               <CardFooter></CardFooter>
             </Card>
           </TabsContent>
-          <TabsContent value="fix">
+          <TabsContent value="fix" className="container">
             <Card>
               <CardHeader>
                 <CardTitle>イベント編集・削除</CardTitle>

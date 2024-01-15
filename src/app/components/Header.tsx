@@ -1,10 +1,17 @@
 "use client";
+import {
+  CalendarClock,
+  Lock,
+  LockKeyhole,
+  LogIn,
+  Pencil,
+  UserPlus,
+} from "lucide-react";
 import Link from "next/link";
 import SignIn from "./auth/SignIn";
 import SignUp from "./auth/SignUp";
 import useAuthCurrentUser from "./auth/useAuthCurrentUser";
 import useUserRole from "./auth/useUserRole";
-import { Button } from "./shadcn/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -25,7 +32,7 @@ import {
 const Header = () => {
   const user = useAuthCurrentUser();
   const userRole = useUserRole(user ? user.uid : null);
-  
+
   return (
     <>
       <header className="hidden md:block sticky top-0 z-50 bg-white w-full dark:bg-black">
@@ -38,17 +45,17 @@ const Header = () => {
                 alt="ロゴ"
                 className="inline-block w-16 h-16"
               />
-              {/* <span>おおさか勉強会</span> */}
             </Link>
           </div>
           <NavigationMenu className="justify-end md:max-w-fit">
-            <NavigationMenuList>
+            <NavigationMenuList className="space-x-5">
               {/* ブログ */}
               <NavigationMenuItem>
                 <Link href="/circle/blog" legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} `}
+                    className={`${navigationMenuTriggerStyle()} flex items-center gap-2`}
                   >
+                    <Pencil />
                     ブログ
                   </NavigationMenuLink>
                 </Link>
@@ -58,22 +65,26 @@ const Header = () => {
               <NavigationMenuItem>
                 <Link href="/circle/schedule" legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} `}
+                    className={`${navigationMenuTriggerStyle()} flex items-center gap-2`}
                   >
+                    <CalendarClock />
                     スケジュール
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
 
               {/* マイページ */}
-              <NavigationMenuItem className="">
+              <NavigationMenuItem className="flex">
                 {!user ? (
                   <>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline" className="mr-3 px-2">
+                        {/* <Button variant="outline" className="mr-3 px-2"> */}
+                        <p className="flex items-center gap-2 cursor-pointer py-2 px-4 rounded-md hover:bg-gray-100">
+                          <UserPlus />
                           サインアップ
-                        </Button>
+                        </p>
+                        {/* </Button> */}
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
@@ -94,9 +105,12 @@ const Header = () => {
                     </Dialog>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="outline" className="px-2">
+                        {/* <Button variant="outline" className="px-2"> */}
+                        <p className="flex items-center gap-2 cursor-pointer py-2 px-4 rounded-md hover:bg-gray-100">
+                          <LogIn />
                           サインイン
-                        </Button>
+                        </p>
+                        {/* </Button> */}
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
@@ -112,8 +126,9 @@ const Header = () => {
                 ) : (
                   <Link href="/user/mypage" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} `}
+                      className={`${navigationMenuTriggerStyle()} flex items-center gap-2`}
                     >
+                      <Lock />
                       マイページ
                     </NavigationMenuLink>
                   </Link>
@@ -125,8 +140,9 @@ const Header = () => {
                 <NavigationMenuItem>
                   <Link href="/admin" legacyBehavior passHref>
                     <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} `}
+                      className={`${navigationMenuTriggerStyle()} flex items-center gap-2`}
                     >
+                      <LockKeyhole />
                       管理者ページ
                     </NavigationMenuLink>
                   </Link>

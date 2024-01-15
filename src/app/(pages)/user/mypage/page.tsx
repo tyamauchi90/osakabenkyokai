@@ -45,7 +45,7 @@ const Mypage = () => {
               <CardFooter></CardFooter>
             </Card>
           </TabsContent>
-          <TabsContent value="account">
+          <TabsContent value="account" className="container">
             <Card>
               <CardHeader>
                 <CardTitle>アカウント</CardTitle>

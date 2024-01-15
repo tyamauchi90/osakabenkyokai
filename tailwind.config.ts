@@ -47,6 +47,7 @@ module.exports = {
       },
       colors: {
         customYellow: "#e7d475",
+        facebookColor: "#4267B2",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

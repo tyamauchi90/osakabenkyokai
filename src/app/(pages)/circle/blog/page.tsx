@@ -77,117 +77,126 @@ const BlogPage = () => {
         </div>
       )}
 
-      <motion.ul
-        className={`max-w-[1400px] w-[90vw] mx-[5vw] space-y-12 ${
-          selectedPost && "overflow-hidden"
-        }`}
-        ref={ref}
-        variants={WhileInListsVariants}
-        initial="start"
-        animate={controls}
-      >
-        {posts?.slice(0, loadIndex).map((post) => {
-          let limitedMessage: React.ReactNode | string = "";
-
-          if (post.message) {
-            limitedMessage =
-              post.message.length > 100 ? (
-                <>
-                  {post.message.slice(0, 100)}
-                  <span> ...... </span>
-                  <span className="text-sm text-gray-400">（続きを読む）</span>
-                </>
-              ) : (
-                post.message.split("\n").map((line, index) => (
-                  <React.Fragment key={index}>
-                    {line}
-                    <br />
-                  </React.Fragment>
-                ))
-              );
-          }
-
-          return (
-            <motion.li
-              key={post.id}
-              className="cursor-pointer"
-              onClick={() => {
-                setSelectedPost(post);
-              }}
-            >
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Card className="lg:flex lg:items-start w-[90vw] py-[5vh] text-center break-words">
-                    <CardHeader className="lg:py-0">
-                      {post.full_picture && (
-                        <div className="lg:w-[320px] mx-auto">
-                          <img
-                            className="object-cover"
-                            src={post.full_picture}
-                            alt={`Facebook Post${post.formattedDate}`}
-                          />
-                        </div>
-                      )}
-                    </CardHeader>
-                    <CardContent className="lg:flex-1 text-lg mb-4">
-                      <CardTitle>
-                        <CardDescription>{post.formattedDate}</CardDescription>
-                      </CardTitle>
-                      <span className="lg:hidden">{limitedMessage}</span>
-                      <span className="hidden lg:block">{post.message}</span>
-                    </CardContent>
-                  </Card>
-                </DialogTrigger>
-                <DialogContent className="m-auto max-w-[90vw] max-h-[90vh] overflow-y-scroll break-words">
-                  <div className="w-[76vw] mx-auto my-[5vh]">
-                    <DialogHeader className="flex flex-col justify-center items-center">
-                      {selectedPost &&
-                        Array.isArray(selectedPost.imgUrls) &&
-                        selectedPost.imgUrls.length > 0 && (
-                          <ScrollArea className="w-[85vw] whitespace-nowrap">
-                            <div className="flex justify-center">
-                              {selectedPost.imgUrls.map((imgurl, index) => (
-                                <img
-                                  className="max-w-xs object-cover mx-auto mb-8"
-                                  key={index}
-                                  src={imgurl}
-                                  alt={`Image ${index}`}
-                                />
-                              ))}
-                            </div>
-                            <ScrollBar orientation="horizontal" />
-                          </ScrollArea>
-                        )}
-                    </DialogHeader>
-                    <DialogTitle className="text-center text-lg">
-                      {selectedPost && selectedPost.formattedDate}
-                    </DialogTitle>
-                    <DialogDescription className="text-center text-lg break-words mb-8">
-                      {selectedPost && selectedPost.message}
-                    </DialogDescription>
-
-                    <DialogFooter className="sm:justify-center">
-                      <DialogClose asChild>
-                        <Button className="">閉じる</Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </motion.li>
-          );
-        })}
-      </motion.ul>
-
-      <div className="flex justify-center my-4">
-        <Button
-          variant="ghost"
-          onClick={handleLoadMore}
-          className="text-gray-400"
-          disabled={!isActive}
+      <div className="container my-10">
+        <h2 className="text-center text-2xl sm:text-4xl mb-7 tracking-widest">
+          ブログ一覧
+        </h2>
+        <motion.ul
+          className={`max-w-[1400px] w-[90vw] mx-auto space-y-12 ${
+            selectedPost && "overflow-hidden"
+          }`}
+          ref={ref}
+          variants={WhileInListsVariants}
+          initial="start"
+          animate={controls}
         >
-          さらに表示
-        </Button>
+          {posts?.slice(0, loadIndex).map((post) => {
+            let limitedMessage: React.ReactNode | string = "";
+
+            if (post.message) {
+              limitedMessage =
+                post.message.length > 100 ? (
+                  <>
+                    {post.message.slice(0, 100)}
+                    <span> ...... </span>
+                    <span className="text-sm text-gray-400">
+                      （続きを読む）
+                    </span>
+                  </>
+                ) : (
+                  post.message.split("\n").map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      <br />
+                    </React.Fragment>
+                  ))
+                );
+            }
+
+            return (
+              <motion.li
+                key={post.id}
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedPost(post);
+                }}
+              >
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Card className="lg:flex lg:items-start w-full py-[5vh] text-center break-words">
+                      <CardHeader className="lg:py-0">
+                        {post.full_picture && (
+                          <div className="lg:w-[320px] mx-auto">
+                            <img
+                              className="object-cover"
+                              src={post.full_picture}
+                              alt={`Facebook Post${post.formattedDate}`}
+                            />
+                          </div>
+                        )}
+                      </CardHeader>
+                      <CardContent className="lg:flex-1 text-lg mb-4">
+                        <CardTitle>
+                          <CardDescription>
+                            {post.formattedDate}
+                          </CardDescription>
+                        </CardTitle>
+                        <span className="lg:hidden">{limitedMessage}</span>
+                        <span className="hidden lg:block">{post.message}</span>
+                      </CardContent>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="m-auto max-w-[90vw] max-h-[90vh] overflow-y-scroll break-words">
+                    <div className="w-[76vw] mx-auto my-[5vh]">
+                      <DialogHeader className="flex flex-col justify-center items-center">
+                        {selectedPost &&
+                          Array.isArray(selectedPost.imgUrls) &&
+                          selectedPost.imgUrls.length > 0 && (
+                            <ScrollArea className="w-[85vw] whitespace-nowrap">
+                              <div className="flex justify-center">
+                                {selectedPost.imgUrls.map((imgurl, index) => (
+                                  <img
+                                    className="max-w-xs object-cover mx-auto mb-8"
+                                    key={index}
+                                    src={imgurl}
+                                    alt={`Image ${index}`}
+                                  />
+                                ))}
+                              </div>
+                              <ScrollBar orientation="horizontal" />
+                            </ScrollArea>
+                          )}
+                      </DialogHeader>
+                      <DialogTitle className="text-center text-lg">
+                        {selectedPost && selectedPost.formattedDate}
+                      </DialogTitle>
+                      <DialogDescription className="text-center text-lg break-words mb-8">
+                        {selectedPost && selectedPost.message}
+                      </DialogDescription>
+
+                      <DialogFooter className="sm:justify-center">
+                        <DialogClose asChild>
+                          <Button className="">閉じる</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </motion.li>
+            );
+          })}
+        </motion.ul>
+
+        <div className="flex justify-center my-4">
+          <Button
+            variant="ghost"
+            onClick={handleLoadMore}
+            className="text-gray-400"
+            disabled={!isActive}
+          >
+            さらに表示
+          </Button>
+        </div>
       </div>
     </>
   );
