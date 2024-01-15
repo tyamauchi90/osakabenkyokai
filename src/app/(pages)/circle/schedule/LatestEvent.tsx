@@ -1,6 +1,7 @@
 "use client";
 import { LoadingSkelton } from "@/app/components/ui/LoadingSkelton";
 import useLatestPost from "@/app/swr/useLatestPost";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -44,11 +45,14 @@ function LatestEvent({ className }: PropsType) {
                 : ""}
             </p>
             <div className="flex justify-center items-center">
-              <img
-                className="w-[180px] h-[180px] -m-8 -mr-4"
-                src="./img/top/805.png"
-                alt="日程"
-              />
+              <div className="relative w-[180px] h-[180px] -m-8 -mr-4">
+                <Image
+                  fill
+                  placeholder="empty"
+                  src="/img/top/805.png"
+                  alt="日程"
+                />
+              </div>
 
               {/* 申込みボタン */}
               <ApplicationDialog post={latestPost} id={latestPost.id} />

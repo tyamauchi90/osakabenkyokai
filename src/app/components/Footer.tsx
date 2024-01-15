@@ -28,7 +28,7 @@ const Footer = () => {
             <div className="w-full mb-8 lg:w-6/12">
               <div className="lg:mx-[6vw] pb-4 lg:pb-0 lg:inline-block border-b lg:border-none border-white">
                 <p className="text-base sm:text-lg mb-2">
-                  学び、成長、交流、"きっかけ"がここに。
+                  学び、成長、交流、&quot;きっかけ&ldquo;がここに。
                 </p>
                 <h4 className="text-2xl sm:text-3xl fonat-semibold">
                   おおさか勉強会

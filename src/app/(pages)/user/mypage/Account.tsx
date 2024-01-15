@@ -28,9 +28,6 @@ const Account = () => {
         <p>【表示名】{user?.displayName}</p>
         <p>【ユーザーID】{user?.uid}</p>
         <p>【メールアドレス】{user?.email}</p>
-        {user?.photoURL ? (
-          <img src={user.photoURL} alt="ユーザーのプロフィール画像" />
-        ) : null}
         <SignOut />
       </Card>
       <Separator />
