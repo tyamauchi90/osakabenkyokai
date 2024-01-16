@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { FacebookPostType } from "../../../../type/facebookPostType";
 
 // GET
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest): Promise<void | NextResponse> {
   try {
     const accessToken = process.env.NEXT_PUBLIC_FACEBOOK_ACCESS_TOKEN;
     const pageId = process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID;
@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
     } else {
       console.error("Unknown Error: ", error);
     }
-    return [];
+    // return [];
+    return;
   }
 }
