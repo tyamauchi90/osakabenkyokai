@@ -46,6 +46,6 @@ export async function GET(
       console.error("Unknown Error: ", error);
     }
     // return [];
-    return;
+    return new NextResponse(null, { status: 500 });
   }
 }
