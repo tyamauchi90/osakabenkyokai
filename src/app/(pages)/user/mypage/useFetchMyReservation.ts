@@ -69,6 +69,7 @@ export const useFetchMyReservation = () => {
     };
 
     fetchApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return applications;

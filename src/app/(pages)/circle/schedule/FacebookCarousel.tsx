@@ -54,7 +54,7 @@ const FacebookCarousel = () => {
     };
 
     updateImageUrls();
-  }, [selectedPost]);
+  }, [imgUrls, selectedPost]);
 
   return (
     <>
