@@ -54,7 +54,7 @@ const BlogPage = () => {
     };
 
     updateImageUrls();
-  }, [selectedPost]);
+  }, [imgUrls, selectedPost]);
 
   const handleLoadMore = () => {
     if (loadIndex + 5 >= posts.length) {

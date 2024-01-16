@@ -1,6 +1,6 @@
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebase/client";
-import { postType } from "../../type/postType";
+import { db } from "../../../../firebase/client";
+import { postType } from "../../../type/postType";
 
 // 投稿詳細取得
 const getPostById = async ({

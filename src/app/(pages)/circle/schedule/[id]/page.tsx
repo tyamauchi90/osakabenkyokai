@@ -110,7 +110,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
       }
     };
     fetchPost();
-  }, [id]);
+  }, [id, form]);
 
   if (!post) {
     return (
