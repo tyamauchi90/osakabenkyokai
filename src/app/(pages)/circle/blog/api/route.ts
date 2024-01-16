@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { FacebookPostType } from "../../../../type/facebookPostType";
 
 // GET
-export async function GET(req: NextRequest): Promise<void | NextResponse> {
+export async function GET(
+  req: NextRequest
+): Promise<void | NextResponse<FacebookPostType[] | undefined>> {
   try {
     const accessToken = process.env.NEXT_PUBLIC_FACEBOOK_ACCESS_TOKEN;
     const pageId = process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID;
