@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
     } else {
       console.error("Unknown Error: ", error);
     }
-    return [];
+    // return [];
+    return new NextResponse(null, { status: 500 });
   }
 }

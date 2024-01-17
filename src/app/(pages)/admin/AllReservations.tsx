@@ -9,8 +9,11 @@ import {
   TableRow,
 } from "@/app/components/shadcn/ui/table";
 import {
-  ColumnDef,
+  AccessorColumnDef,
+  ColumnDefBase,
   ColumnFiltersState,
+  GroupColumnDef,
+  RowData,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -29,11 +32,24 @@ export type CellType = {
   isPaid: "支払済み" | "当日支払い";
 };
 
-export const columns: ColumnDef<CellType>[] = [
+export interface DisplayColumnDef<TData extends RowData, TValue = unknown>
+  extends ColumnDefBase<TData, TValue> {
+  id: string;
+  displayName?: string;
+  accessorFn: (originalRow: TData) => TValue;
+  accessorKey?: string;
+}
+
+export type ColumnDefType<TData extends RowData, TValue = unknown> =
+  | DisplayColumnDef<TData, TValue>
+  | GroupColumnDef<TData, TValue>
+  | AccessorColumnDef<TData, TValue>;
+
+export const columns: ColumnDefType<CellType>[] = [
   {
     accessorKey: "eventDate",
     displayName: "イベント日",
-    accessorFn: (originalRow) => {
+    accessorFn: (originalRow: CellType) => {
       return originalRow.eventDate;
     },
     enableColumnFilter: true,
@@ -52,7 +68,7 @@ export const columns: ColumnDef<CellType>[] = [
   {
     accessorKey: "userName",
     displayName: "ユーザー名",
-    accessorFn: (originalRow) => {
+    accessorFn: (originalRow: CellType) => {
       return originalRow.userName;
     },
     enableColumnFilter: true,
@@ -71,7 +87,7 @@ export const columns: ColumnDef<CellType>[] = [
   {
     accessorKey: "userId",
     displayName: "ユーザーID",
-    accessorFn: (originalRow) => {
+    accessorFn: (originalRow: CellType) => {
       return originalRow.userId;
     },
     enableColumnFilter: true,
@@ -98,7 +114,7 @@ export const columns: ColumnDef<CellType>[] = [
 ];
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDefType<TData, TValue>[];
   data: TData[];
 }
 
@@ -131,21 +147,28 @@ const AllReservations = <TData, TValue>({
     <>
       <div className="sm:m-5 sm:p-5">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 items-center py-4">
-          {filterableColumns.map((column) => (
-            <Input
-              key={column.accessorKey}
-              placeholder={`フィルター (${column.displayName})`}
-              value={
-                table.getColumn(column.accessorKey)?.getFilterValue() ?? ""
-              }
-              onChange={(event) =>
-                table
-                  .getColumn(column.accessorKey)
-                  ?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-          ))}
+          {filterableColumns.map((column) => {
+            if ("displayName" in column) {
+              return (
+                <Input
+                  key={column.id}
+                  placeholder={`フィルター (${column.displayName})`}
+                  value={
+                    (table
+                      .getColumn(column.accessorKey as string)
+                      ?.getFilterValue() as string) ?? ""
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn(column.accessorKey as string)
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-sm"
+                />
+              );
+            }
+            return null;
+          })}
         </div>
         <div className="rounded-md border">
           <Table>

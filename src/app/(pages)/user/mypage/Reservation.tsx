@@ -1,6 +1,7 @@
 import { Button } from "@/app/components/shadcn/ui/button";
 import { Card } from "@/app/components/shadcn/ui/card";
 import { useToast } from "@/app/components/shadcn/ui/use-toast";
+import { TimestampType } from "@/app/type/TimestampType";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTimestampFormatter } from "../../circle/schedule/useTimestampFormatter";
@@ -60,8 +61,15 @@ const Reservation = () => {
     <>
       {applications.length > 0 ? (
         applications.map((application, index) => {
-          const date = new Date(application.eventDate._seconds * 1000);
-          const canCancel = date > new Date();
+          const date =
+            application && application.eventDate
+              ? new Date(
+                  ((application.eventDate as unknown as TimestampType)
+                    ._seconds || application.eventDate.seconds) * 1000
+                )
+              : undefined;
+          const canCancel = date && date > new Date();
+
           return (
             <Card
               key={index}
