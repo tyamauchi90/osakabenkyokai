@@ -1,10 +1,17 @@
 import { Timestamp } from "firebase/firestore";
 
+// Timestampが_customプロパティを持っているかどうかをチェックする型ガード
+function isTimestampWithUnderscoreSeconds(
+  timestamp: any
+): timestamp is Timestamp & { _seconds: number } {
+  return "_seconds" in timestamp;
+}
+
 export const useTimestampFormatter = () => {
   const convertTimestampToDate = (timestamp: Timestamp) => {
-    const seconds =
-      "seconds" in timestamp ? timestamp.seconds : timestamp._seconds; // ToDo:_secondsになる理由がわからない
-    // return new Date(seconds * 1000 + timestamp.nanoseconds / 1e6);
+    const seconds = isTimestampWithUnderscoreSeconds(timestamp)
+      ? timestamp._seconds
+      : timestamp.seconds;
     return new Date(seconds * 1000);
   };
 

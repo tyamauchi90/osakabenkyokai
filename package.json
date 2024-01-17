@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "mail": "email dev -p 3001"
+    "mail": "email dev -p 3001",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
@@ -54,7 +55,9 @@
     "next": "^13.5.6",
     "next-themes": "^0.2.1",
     "nodemailer": "^6.9.8",
+    "patch-package": "^8.0.0",
     "postcss": "8.4.29",
+    "postinstall-postinstall": "^2.1.0",
     "react": "18.2.0",
     "react-day-picker": "^8.9.1",
     "react-dom": "18.2.0",
@@ -75,6 +78,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.14",
     "@types/react-scroll": "^1.8.10"
   }
 }

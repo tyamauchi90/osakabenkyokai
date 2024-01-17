@@ -53,6 +53,7 @@ import {
   FormMessage,
 } from "@/app/components/shadcn/ui/form";
 import { Input } from "@/app/components/shadcn/ui/input";
+import { TimestampType } from "@/app/type/TimestampType";
 import { useTimestampFormatter } from "../circle/schedule/useTimestampFormatter";
 
 const formSchema = z.object({
@@ -227,8 +228,14 @@ function PopupEventLists() {
       {posts &&
         posts.map((post: postType) => {
           const id = post.id;
-          const date = new Date(post.eventDate?.seconds * 1000);
-          const canCancel = date > new Date();
+          const date =
+            post && post.eventDate
+              ? new Date(
+                  ((post.eventDate as unknown as TimestampType)._seconds ||
+                    post.eventDate.seconds) * 1000
+                )
+              : undefined;
+          const canCancel = date && date > new Date();
 
           return (
             <li key={id} className="w-fll my-10 sm:m-10">
