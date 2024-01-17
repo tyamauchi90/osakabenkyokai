@@ -9,6 +9,7 @@ import "./globals.css";
 import Loading from "./loading";
 // import { Provider } from "react-redux";
 // import { store } from "./redux/store";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import HeaderSp from "../components/HeaderSp";
 import Favicon from "/public/img/top/favicon.ico";
 
@@ -38,6 +39,7 @@ export default function RootLayout({
           disableTransitionOnChange
         > */}
         <Providers>
+          <SpeedInsights />
           <Header />
           <HeaderSp />
           <Suspense fallback={<Loading />}>{children}</Suspense>
