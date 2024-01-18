@@ -1,5 +1,6 @@
 "use client";
 import {
+  BadgeAlert,
   CalendarClock,
   Facebook,
   Home,
@@ -82,6 +83,12 @@ const Footer = () => {
                         </Link>
                       </li>
                     )}
+                    <li>
+                      <Link href="/policy" className="flex items-center gap-2">
+                        <BadgeAlert />
+                        利用規約・プライバシーポリシー
+                      </Link>
+                    </li>
                   </ul>
                   <div className="flex items-center gap-4">
                     <Link

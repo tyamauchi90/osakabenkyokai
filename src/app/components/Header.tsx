@@ -55,7 +55,7 @@ const Header = () => {
               <NavigationMenuItem>
                 <Link href="/circle/blog" legacyBehavior passHref>
                   <NavigationMenuLink
-                    className={`${navigationMenuTriggerStyle()} flex items-center gap-2`}
+                    className={`${navigationMenuTriggerStyle()} flex items-center gap-2 pr-6`}
                   >
                     <Pencil />
                     ブログ
@@ -81,38 +81,27 @@ const Header = () => {
                   <>
                     <Dialog>
                       <DialogTrigger asChild>
-                        {/* <Button variant="outline" className="mr-3 px-2"> */}
-                        <p className="flex items-center gap-2 cursor-pointer py-2 px-4 rounded-md hover:bg-gray-100">
+                        <p className="flex items-center gap-2 cursor-pointer py-2 pl-2 pr-5 rounded-md hover:bg-gray-100">
                           <UserPlus />
                           サインアップ
                         </p>
-                        {/* </Button> */}
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
                           <DialogTitle>サインアップ</DialogTitle>
-                          {/* <DialogDescription>
-                      （サインインをします）
-                    </DialogDescription> */}
                         </DialogHeader>
                         <SignUp />
                         <DialogFooter className="sm:justify-start">
-                          <DialogClose asChild>
-                            {/* <Button type="button" variant="secondary">
-                        Close
-                      </Button> */}
-                          </DialogClose>
+                          <DialogClose asChild></DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
                     <Dialog>
                       <DialogTrigger asChild>
-                        {/* <Button variant="outline" className="px-2"> */}
-                        <p className="flex items-center gap-2 cursor-pointer py-2 px-4 rounded-md hover:bg-gray-100">
+                        <p className="flex items-center gap-2 cursor-pointer py-2 pl-5 rounded-md hover:bg-gray-100">
                           <LogIn />
                           サインイン
                         </p>
-                        {/* </Button> */}
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-lg">
                         <DialogHeader>
