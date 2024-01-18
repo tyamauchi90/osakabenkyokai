@@ -64,6 +64,7 @@ const ContactPage = () => {
         });
 
         form.reset();
+        router.push("/");
         router.refresh();
         toast({
           title: "送信完了しました",

@@ -83,7 +83,7 @@ const HeaderSp = () => {
       <header className="block md:hidden sticky top-0 z-50 bg-white w-full dark:bg-black">
         <motion.div
           animate={isOpen ? "open" : "closed"}
-          className="relative flex justify-between items-center w-full py-2 px-2"
+          className="relative flex justify-between items-center w-full py-2 px-4"
         >
           {/* トップ */}
           <Link
