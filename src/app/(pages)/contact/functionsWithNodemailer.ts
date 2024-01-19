@@ -11,28 +11,28 @@ admin.initializeApp();
 //                     || functions.config().email.account;
 // const gmailPassword =
 //   process.env.GMAIL_PASSWORD || functions.config().email.password;
-const gmailEmail = process.env.GMAIL_EMAIL;
-const gmailPassword = process.env.GMAIL_PASSWORD;
+// const gmailEmail = process.env.GMAIL_EMAIL;
+// const gmailPassword = process.env.GMAIL_PASSWORD;
 
 // SMTPの設定
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: gmailEmail,
-    pass: gmailPassword,
+    user: process.env.GMAIL_EMAIL,
+    pass: process.env.GMAIL_PASSWORD,
   },
 });
 
 exports.sendEmailNotification = functions.firestore
-  .document("contacts/{docId}")
+  .document("/contacts/{docId}")
   .onCreate(async (snap) => {
     const data = snap.data(); // 追加されたドキュメントのデータを取得
 
     if (data && "email" in data && "name" in data && "message" in data) {
       // メールのオプションを設定
       const mailOptions: nodemailer.SendMailOptions = {
-        from: gmailEmail,
-        to: gmailEmail,
+        from: process.env.GMAIL_EMAIL,
+        to: process.env.GMAIL_EMAIL,
         subject: "【おおさか勉強会】新しいお問合せがありました",
         text: `Name: ${data.name}\n
         Email: ${data.email}\n
