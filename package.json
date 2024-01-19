@@ -10,6 +10,9 @@
     "mail": "email dev -p 3001",
     "postinstall": "patch-package"
   },
+  "engines": {
+    "node": "18"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
     "@radix-ui/react-accordion": "^1.1.2",
