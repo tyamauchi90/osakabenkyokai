@@ -24,14 +24,14 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendEmailNotification = functions.firestore
-  .document("/contacts/{docId}")
+  .document("contacts/{docId}")
   .onCreate(async (snap) => {
     const data = snap.data(); // 追加されたドキュメントのデータを取得
 
     if (data && "email" in data && "name" in data && "message" in data) {
       // メールのオプションを設定
       const mailOptions: nodemailer.SendMailOptions = {
-        from: process.env.GMAIL_EMAIL,
+        from: `${data.email}`,
         to: process.env.GMAIL_EMAIL,
         subject: "【おおさか勉強会】新しいお問合せがありました",
         text: `Name: ${data.name}\n
