@@ -23,6 +23,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//contactsコレクションの任意のドキュメント({docId}はワイルドカード)が作成されたときにトリガーする
 exports.sendEmailNotification = functions.firestore
   .document("contacts/{docId}")
   .onCreate(async (snap) => {

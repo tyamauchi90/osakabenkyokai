@@ -4,16 +4,6 @@ import * as nodemailer from "nodemailer";
 
 admin.initializeApp();
 
-// 本番環境（デプロイ時）はFirebaseの環境設定から設定値を読み込む
-// ToDo:firebase functions:config:set email.account="your-email@example.com"
-//                                    email.password="your-password"
-// const gmailEmail = process.env.GMAIL_EMAIL
-//                     || functions.config().email.account;
-// const gmailPassword =
-//   process.env.GMAIL_PASSWORD || functions.config().email.password;
-// const gmailEmail = process.env.GMAIL_EMAIL;
-// const gmailPassword = process.env.GMAIL_PASSWORD;
-
 // SMTPの設定
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -23,15 +13,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//contactsコレクションの任意のドキュメント({docId}はワイルドカード)が作成されたときにトリガーする
 exports.sendEmailNotification = functions.firestore
-  .document("/contacts/{docId}")
+  .document("contacts/{docId}")
   .onCreate(async (snap) => {
     const data = snap.data(); // 追加されたドキュメントのデータを取得
 
     if (data && "email" in data && "name" in data && "message" in data) {
       // メールのオプションを設定
       const mailOptions: nodemailer.SendMailOptions = {
-        from: process.env.GMAIL_EMAIL,
+        from: `${data.email}`,
         to: process.env.GMAIL_EMAIL,
         subject: "【おおさか勉強会】新しいお問合せがありました",
         text: `Name: ${data.name}\n
