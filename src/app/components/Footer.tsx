@@ -38,7 +38,7 @@ const Footer = () => {
             </div>
             <div className="w-full lg:w-6/12 px-4">
               <div className="flex items-top mb-6">
-                <div className="flex flex-wrap items-center justify-evenly w-full px-4 ml-auto gap-8">
+                <div className="flex flex-wrap items-center justify-evenly w-full px-2 sm:px-4 ml-auto gap-8">
                   <ul className="list-unstyled space-y-4">
                     <li>
                       <Link href="/" className="flex items-center gap-2">
