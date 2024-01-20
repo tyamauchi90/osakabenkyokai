@@ -33,7 +33,7 @@ module.exports = {
         customMainvisual: "clamp(23.438rem, 11.433rem + 51.22vw, 56.25rem)",
         customMainvisualReservation:
           "clamp(1.125rem, 0.439rem + 2.927vw, 3rem)",
-        customMainvisualPencil: "clamp(2rem, 0.674rem + 5.659vw, 5.625rem)",
+        customWorryImage: "clamp(15.625rem, 12.324rem + 14.085vw, 25rem)",
         customAccordion: "clamp(20rem, -1.226rem + 90.566vw, 35rem)",
         customFlow: "clamp(23.438rem, 19.097rem + 18.519vw, 28.125rem)",
         customFlowImg: "clamp(10rem, 4.792rem + 22.222vw, 15.625rem);",
@@ -42,7 +42,7 @@ module.exports = {
         customMainvisual: "clamp(23.438rem, 11.433rem + 51.22vw, 56.25rem)",
         customMainvisualReservation:
           "clamp(1.125rem, 0.439rem + 2.927vw, 3rem)",
-        customMainvisualPencil: "clamp(2rem, 0.674rem + 5.659vw, 5.625rem)",
+        customWorryImage: "clamp(15.625rem, 12.324rem + 14.085vw, 25rem)",
         customFlowImg: "clamp(10rem, 4.792rem + 22.222vw, 15.625rem);",
       },
       colors: {

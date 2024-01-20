@@ -20,7 +20,7 @@ const Reservation = () => {
 
     try {
       let overwrite = false;
-      overwrite = confirm("すでに予約されています。キャンセルしますか？"); // ToDo:alert Dialogの使用を検討
+      overwrite = confirm("すでに予約されています。予約を取り消しますか？"); // ToDo:alert Dialogの使用を検討
       if (!overwrite) {
         setLoadingId(null);
         router.push(`/user/mypage/`);
