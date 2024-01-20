@@ -4,34 +4,34 @@ import * as nodemailer from "nodemailer";
 
 admin.initializeApp();
 
-// SMTPの設定
+const gmailEmail = process.env.GMAIL_EMAIL || functions.config().gmail.email;
+const gmailPassword =
+  process.env.GMAIL_PASSWORD || functions.config().gmail.pass;
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
+  secure: true,
   auth: {
-    user: process.env.GMAIL_EMAIL,
-    pass: process.env.GMAIL_PASSWORD,
+    user: gmailEmail,
+    pass: gmailPassword,
   },
 });
 
-//contactsコレクションの任意のドキュメント({docId}はワイルドカード)が作成されたときにトリガーする
 exports.sendEmailNotification = functions.firestore
-  .document("contacts/{docId}")
+  .document("/contacts/{docId}")
   .onCreate(async (snap) => {
-    const data = snap.data(); // 追加されたドキュメントのデータを取得
+    const data = snap.data();
 
     if (data && "email" in data && "name" in data && "message" in data) {
-      // メールのオプションを設定
       const mailOptions: nodemailer.SendMailOptions = {
         from: `${data.email}`,
-        to: process.env.GMAIL_EMAIL,
+        to: gmailEmail,
         subject: "【おおさか勉強会】新しいお問合せがありました",
-        text: `Name: ${data.name}\n
-        Email: ${data.email}\n
-        Message: ${data.message}`,
+        text: `名前: ${data.name}\nメール: ${data.email}\n内容: ${data.message}`,
       };
 
       try {
-        const info = await transporter.sendMail(mailOptions); // メール送信
+        const info = await transporter.sendMail(mailOptions);
         console.log("Email sent: " + info.response);
       } catch (error) {
         console.error("An error occurred: ", error);
