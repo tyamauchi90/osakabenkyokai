@@ -17,6 +17,7 @@ admin.initializeApp();
 // SMTPの設定
 const transporter = nodemailer.createTransport({
   service: "gmail",
+  secure: true,
   auth: {
     user: process.env.GMAIL_EMAIL,
     pass: process.env.GMAIL_PASSWORD,
