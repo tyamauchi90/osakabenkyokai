@@ -11,7 +11,7 @@ type PropsType = {
 export const WhileInDiv = ({ className, children }: PropsType) => {
   const controls = useAnimation();
   const { ref, inView } = useInView({
-    rootMargin: "-250px",
+    rootMargin: "-50px",
     triggerOnce: true,
   });
 
