@@ -234,7 +234,7 @@ const Mainvisual = () => {
                     <BookOpenCheck className="mx-2 w-customMainvisualReservation h-customMainvisualReservation" />
                   </motion.div>
                 </PopoverTrigger>
-                <PopoverContent className="min-w-[375px]">
+                <PopoverContent className="w-[350px] sm:min-w-[375px]">
                   <LatestEvent className="border-none shadow-none" />
                 </PopoverContent>
               </Popover>

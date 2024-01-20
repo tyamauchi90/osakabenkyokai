@@ -71,7 +71,7 @@ const WorryCard: React.FC<WorryCardType> = ({
           {text4}
         </p>
       </div>
-      <div className="relative w-full min-h-[400px]">
+      <div className="relative mx-auto w-customWorryImage h-customWorryImage">
         <Image
           fill
           className="w-full object-cover"
