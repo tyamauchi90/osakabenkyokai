@@ -2,7 +2,7 @@ import { User } from "firebase/auth";
 import { Timestamp, addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { db } from "../../../../firebase/client";
+import { db } from "../../../../../firebase/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
