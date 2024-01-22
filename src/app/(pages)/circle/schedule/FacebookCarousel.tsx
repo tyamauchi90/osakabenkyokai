@@ -198,6 +198,73 @@ const FacebookCarousel = () => {
               </Dialog>
             );
           })}
+          {/* return (
+              <Dialog key={post.id}>
+                <DialogTrigger asChild>
+                  <SplideSlide
+                    key={post.id}
+                    className="overflow-hidden grayscale scale-90 duration-300 opacity-50 pointer-events-none"
+                    onClick={() => {
+                      setSelectedPost(post);
+                    }}
+                  >
+                    <p className="text-center text-gray-500 py-4 opacity-100">
+                      {post.formattedDate}
+                    </p>
+                    <div className="relative min-w-[400px] min-h-[400px] overflow-hidden">
+                      {post.full_picture ? (
+                        <img
+                          src={post.full_picture}
+                          alt="Facebook Post"
+                          className="absolute inset-0 object-cover duration-500 hover:scale-110 hover:duration-500"
+                        />
+                      ) : (
+                        <p>{post.message}</p>
+                      )}
+                    </div>
+                  </SplideSlide>
+                </DialogTrigger>
+                <DialogContent className="m-auto p-7 max-w-[90vw] max-h-[90vh] overflow-y-auto">
+                  <div className="m-auto w-[80vw]">
+                    <DialogHeader>
+                      <DialogTitle className="text-center text-lg">
+                        {selectedPost && selectedPost.formattedDate}
+                      </DialogTitle>
+                    </DialogHeader>
+                    {selectedPost && (
+                      <DialogDescription className="text-center ">
+                        <h2 className="text-lg break-words mb-8">
+                          {selectedPost.message}
+                        </h2>
+
+                        {Array.isArray(selectedPost.imgUrls) &&
+                          selectedPost.imgUrls.length > 0 && (
+                            <ScrollArea className="mb-8">
+                              <div className="flex justify-center">
+                                {selectedPost.imgUrls.map((imgurl, index) => (
+                                  <img
+                                    className="max-w-sm object-cover"
+                                    key={index}
+                                    src={imgurl}
+                                    alt={`Image ${index}`}
+                                  />
+                                ))}
+                              </div>
+                              <ScrollBar orientation="horizontal" />
+                            </ScrollArea>
+                          )}
+                      </DialogDescription>
+                    )}
+                    <DialogFooter className="sm:justify-center">
+                      <DialogClose asChild>
+                        <Button className="">閉じる</Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            );
+          })} */}
         </Splide>
       </div>
     </>
