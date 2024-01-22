@@ -22,7 +22,6 @@ import { LoadingSkelton } from "@/app/components/ui/LoadingSkelton";
 import useAllFacebookPosts from "@/app/swr/useAllFacebookPosts";
 import type { SelectedFacebookPostType } from "@/app/type/facebookPostType";
 import { motion, useAnimation } from "framer-motion";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { WhileInListsVariants } from "../../variants";
@@ -67,23 +66,23 @@ const BlogPage = () => {
 
   return (
     <>
-      {isLoading && (
-        <div className="w-full h-screen">
-          <LoadingSkelton />
-        </div>
-      )}
-      {error && (
-        <div className="w-full h-screen">
-          データ取得に失敗しました。もう一度やり直してください。
-        </div>
-      )}
-
       <div className="container my-12">
+        {isLoading && (
+          <div className="w-full h-screen">
+            <LoadingSkelton />
+          </div>
+        )}
+        {error && (
+          <div className="w-full h-screen">
+            データ取得に失敗しました。もう一度やり直してください。
+          </div>
+        )}
+
         <h2 className="text-center text-2xl sm:text-4xl mb-12 tracking-widest">
           ブログ一覧
         </h2>
         <motion.ul
-          className={`max-w-[1400px] w-[90vw] mx-auto space-y-12 ${
+          className={`w-full mx-auto space-y-12 ${
             selectedPost && "overflow-hidden"
           }`}
           ref={ref}
@@ -124,11 +123,20 @@ const BlogPage = () => {
               >
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="lg:flex lg:items-start w-full py-[5vh] text-center break-words">
-                      <CardHeader className="pt-0 px-0 lg:py-0 lg:px-6">
-                        <div className="lg:w-[30vw] mx-auto">
+                    <Card className="md:flex md:items-start w-full py-6 text-center break-words">
+                      <CardHeader className="pt-0 px-0 md:py-0">
+                        {post.full_picture && (
+                          <div className="max-w-xs md:w-[320px] mx-auto md:pl-6">
+                            <img
+                              className="object-cover"
+                              src={post.full_picture}
+                              alt={`Facebook Post${post.formattedDate}`}
+                            />
+                          </div>
+                        )}
+                        {/* <div className="lg:w-[30vw] mx-auto">
                           {post.full_picture && (
-                            <div className="relative w-[50vw] lg:w-[30vw] h-[50vw] lg:h-[30vw]">
+                            <div className="relative w-[70vw] lg:w-[30vw] h-[50vw] lg:h-[30vw]">
                               <Image
                                 fill
                                 placeholder="empty"
@@ -138,9 +146,9 @@ const BlogPage = () => {
                               />
                             </div>
                           )}
-                        </div>
+                        </div> */}
                       </CardHeader>
-                      <CardContent className="py-0 lg:w-[50vw] lg:flex-1 text-lg mb-4">
+                      <CardContent className="py-0 md:flex-1 text-lg mb-4">
                         <CardTitle>
                           <CardDescription>
                             {post.formattedDate}
@@ -152,30 +160,43 @@ const BlogPage = () => {
                     </Card>
                   </DialogTrigger>
                   <DialogContent className="m-auto max-w-[90vw] max-h-[90vh] overflow-y-scroll break-words">
-                    <div className="w-[76vw] mx-auto my-[5vh]">
+                    <div className="w-[80vw] mx-auto my-[5vh]">
                       <DialogHeader className="flex flex-col justify-center items-center">
                         {selectedPost &&
                           Array.isArray(selectedPost.imgUrls) &&
                           selectedPost.imgUrls.length > 0 && (
-                            <ScrollArea className="w-[85vw] whitespace-nowrap">
-                              <div className="flex justify-center gap-4">
+                            <ScrollArea className="w-[80vw] mb-8 whitespace-nowrap">
+                              <div className="flex justify-center space-x-1">
                                 {selectedPost.imgUrls.map((imgurl) => (
-                                  <div
+                                  <img
+                                    className="object-cover max-w-sm sm:max-w-[50vw] lg:max-w-[40vw]"
                                     key={selectedPost.id}
-                                    className="relative w-[50vw] lg:w-[30vw] h-[50vw] lg:h-[30vw]"
-                                  >
-                                    <Image
-                                      fill
-                                      placeholder="empty"
-                                      className="object-cover mx-auto mb-8"
-                                      src={imgurl}
-                                      alt={`Image ${selectedPost.created_time}`}
-                                    />
-                                  </div>
+                                    src={imgurl}
+                                    alt={`Image ${selectedPost.created_time}`}
+                                  />
                                 ))}
                               </div>
                               <ScrollBar orientation="horizontal" />
                             </ScrollArea>
+                            // <ScrollArea className="w-[85vw] whitespace-nowrap">
+                            //   <div className="flex justify-center gap-4">
+                            //     {selectedPost.imgUrls.map((imgurl) => (
+                            //       <div
+                            //         key={selectedPost.id}
+                            //         className="relative w-[70vw] h-[40vw]"
+                            //       >
+                            //         <Image
+                            //           fill
+                            //           placeholder="empty"
+                            //           className="object-cover mx-auto mb-8"
+                            //           src={imgurl}
+                            //           alt={`Image ${selectedPost.created_time}`}
+                            //         />
+                            //       </div>
+                            //     ))}
+                            //   </div>
+                            //   <ScrollBar orientation="horizontal" />
+                            // </ScrollArea>
                           )}
                       </DialogHeader>
                       <DialogTitle className="text-center text-lg">
@@ -198,7 +219,7 @@ const BlogPage = () => {
           })}
         </motion.ul>
 
-        <div className="flex justify-center my-4">
+        <div className="flex justify-center my-6">
           <Button
             variant="ghost"
             onClick={handleLoadMore}

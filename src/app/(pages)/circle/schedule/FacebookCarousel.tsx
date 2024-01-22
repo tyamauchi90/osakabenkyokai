@@ -6,7 +6,6 @@ import useAllFacebookPosts from "@/app/swr/useAllFacebookPosts";
 import { SelectedFacebookPostType } from "@/app/type/facebookPostType";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -58,19 +57,19 @@ const FacebookCarousel = () => {
 
   return (
     <>
-      {!posts ||
-        (isLoading && (
-          <div className="w-full h-screen">
-            <LoadingSkelton />
-          </div>
-        ))}
-      {error && (
-        <div className="w-full h-screen">
-          データ取得に失敗しました。もう一度やり直してください。
-        </div>
-      )}
-
       <div className="container flex flex-col items-center overflow-x-hidden">
+        {!posts ||
+          (isLoading && (
+            <div className="w-full h-screen">
+              <LoadingSkelton />
+            </div>
+          ))}
+        {error && (
+          <div className="w-full h-screen">
+            データ取得に失敗しました。もう一度やり直してください。
+          </div>
+        )}
+
         <Splide
           options={{
             type: "loop",
@@ -95,7 +94,7 @@ const FacebookCarousel = () => {
             breakpoints: {
               768: {
                 fixedWidth: "50%",
-                perPage: 2,
+                perPage: 3,
               },
               640: {
                 fixedWidth: "100%",
@@ -138,8 +137,20 @@ const FacebookCarousel = () => {
                     </p>
                     <div className="relative min-w-[400px] min-h-[400px] overflow-hidden">
                       {post.full_picture ? (
+                        <img
+                          src={post.full_picture}
+                          alt="Facebook Post"
+                          className="absolute inset-0 object-cover duration-500 hover:scale-110 hover:duration-500"
+                        />
+                      ) : (
+                        <p>{post.message}</p>
+                      )}
+                    </div>
+                    {/* <div className="relative min-w-[600px] min-h-[300px] overflow-hidden">
+                      {post.full_picture ? (
                         <Image
-                          fill
+                          layout="fill"
+                          objectFit="cover"
                           placeholder="empty"
                           className="absolute inset-0 object-cover duration-500 hover:scale-110 hover:duration-500"
                           src={post.full_picture}
@@ -148,46 +159,57 @@ const FacebookCarousel = () => {
                       ) : (
                         <p>{post.message}</p>
                       )}
-                    </div>
+                    </div> */}
                   </SplideSlide>
                 </DialogTrigger>
                 <DialogContent className="m-auto p-7 max-w-[90vw] max-h-[90vh] overflow-y-auto">
-                  <div className="m-auto w-[80vw]">
+                  <div className="w-[80vw] mx-auto my-[5vh]">
                     <DialogHeader>
-                      <DialogTitle className="text-center text-lg">
-                        {selectedPost && selectedPost.formattedDate}
-                      </DialogTitle>
+                      {selectedPost &&
+                        Array.isArray(selectedPost.imgUrls) &&
+                        selectedPost.imgUrls.length > 0 && (
+                          <ScrollArea className="w-[80vw] mb-8 whitespace-nowrap">
+                            <div className="flex justify-center space-x-1">
+                              {selectedPost.imgUrls.map((imgurl) => (
+                                <img
+                                  className="object-cover max-w-sm sm:max-w-[50vw] lg:max-w-[40vw]"
+                                  key={selectedPost.id}
+                                  src={imgurl}
+                                  alt={`Image ${selectedPost.created_time}`}
+                                />
+                              ))}
+                            </div>
+                            <ScrollBar orientation="horizontal" />
+                          </ScrollArea>
+                          //   <ScrollArea className="mb-8">
+                          //   <div className="flex justify-center gap-4">
+                          //     {selectedPost.imgUrls.map((imgurl) => (
+                          //       <div
+                          //         key={selectedPost.id}
+                          //         className="relative w-[70vw] h-[40vw]"
+                          //       >
+                          //         <Image
+                          //           layout="fill"
+                          //           objectFit="cover"
+                          //           placeholder="empty"
+                          //           className="w-full h-auto"
+                          //           src={imgurl}
+                          //           alt={`Image ${selectedPost.created_time}`}
+                          //         />
+                          //       </div>
+                          //     ))}
+                          //   </div>
+                          //   <ScrollBar orientation="horizontal" />
+                          // </ScrollArea>
+                        )}
                     </DialogHeader>
-                    {selectedPost && (
-                      <DialogDescription className="text-center ">
-                        <h2 className="text-lg break-words mb-8">
-                          {selectedPost.message}
-                        </h2>
+                    <DialogTitle className="text-center text-lg">
+                      {selectedPost && selectedPost.formattedDate}
+                    </DialogTitle>
+                    <DialogDescription className="text-center text-lg break-words mb-8">
+                      {selectedPost && selectedPost.message}
+                    </DialogDescription>
 
-                        {Array.isArray(selectedPost.imgUrls) &&
-                          selectedPost.imgUrls.length > 0 && (
-                            <ScrollArea className="mb-8">
-                              <div className="w-full h-[40vw] sm:h-[30vw] flex justify-center gap-4">
-                                {selectedPost.imgUrls.map((imgurl) => (
-                                  <div
-                                    key={selectedPost.id}
-                                    className="relative w-[40vw] sm:w-[30vw] h-[40vw] sm:h-[30vw]"
-                                  >
-                                    <Image
-                                      fill
-                                      placeholder="empty"
-                                      className="object-cover"
-                                      src={imgurl}
-                                      alt={`Image ${selectedPost.created_time}`}
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                              <ScrollBar orientation="horizontal" />
-                            </ScrollArea>
-                          )}
-                      </DialogDescription>
-                    )}
                     <DialogFooter className="sm:justify-center">
                       <DialogClose asChild>
                         <Button className="">閉じる</Button>
@@ -198,73 +220,6 @@ const FacebookCarousel = () => {
               </Dialog>
             );
           })}
-          {/* return (
-              <Dialog key={post.id}>
-                <DialogTrigger asChild>
-                  <SplideSlide
-                    key={post.id}
-                    className="overflow-hidden grayscale scale-90 duration-300 opacity-50 pointer-events-none"
-                    onClick={() => {
-                      setSelectedPost(post);
-                    }}
-                  >
-                    <p className="text-center text-gray-500 py-4 opacity-100">
-                      {post.formattedDate}
-                    </p>
-                    <div className="relative min-w-[400px] min-h-[400px] overflow-hidden">
-                      {post.full_picture ? (
-                        <img
-                          src={post.full_picture}
-                          alt="Facebook Post"
-                          className="absolute inset-0 object-cover duration-500 hover:scale-110 hover:duration-500"
-                        />
-                      ) : (
-                        <p>{post.message}</p>
-                      )}
-                    </div>
-                  </SplideSlide>
-                </DialogTrigger>
-                <DialogContent className="m-auto p-7 max-w-[90vw] max-h-[90vh] overflow-y-auto">
-                  <div className="m-auto w-[80vw]">
-                    <DialogHeader>
-                      <DialogTitle className="text-center text-lg">
-                        {selectedPost && selectedPost.formattedDate}
-                      </DialogTitle>
-                    </DialogHeader>
-                    {selectedPost && (
-                      <DialogDescription className="text-center ">
-                        <h2 className="text-lg break-words mb-8">
-                          {selectedPost.message}
-                        </h2>
-
-                        {Array.isArray(selectedPost.imgUrls) &&
-                          selectedPost.imgUrls.length > 0 && (
-                            <ScrollArea className="mb-8">
-                              <div className="flex justify-center">
-                                {selectedPost.imgUrls.map((imgurl, index) => (
-                                  <img
-                                    className="max-w-sm object-cover"
-                                    key={index}
-                                    src={imgurl}
-                                    alt={`Image ${index}`}
-                                  />
-                                ))}
-                              </div>
-                              <ScrollBar orientation="horizontal" />
-                            </ScrollArea>
-                          )}
-                      </DialogDescription>
-                    )}
-                    <DialogFooter className="sm:justify-center">
-                      <DialogClose asChild>
-                        <Button className="">閉じる</Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            );
-          })} */}
         </Splide>
       </div>
     </>
