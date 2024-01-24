@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../../components/shadcn/ui/dialog";
+import useNoImage from "./useNoImage";
 
 type SlideType = {
   style: {
@@ -44,6 +45,7 @@ const FacebookCarousel = () => {
   );
   const [selectedPost, setSelectedPost] =
     useState<SelectedFacebookPostType | null>(null);
+  const noImage = useNoImage();
 
   useEffect(() => {
     const updateImageUrls = () => {
@@ -135,15 +137,19 @@ const FacebookCarousel = () => {
                     <p className="text-center text-gray-500 py-4 opacity-100">
                       {post.formattedDate}
                     </p>
-                    <div className="relative min-w-[400px] min-h-[400px] overflow-hidden">
+                    <div className="flex items-center justify-center overflow-hidden">
                       {post.full_picture ? (
                         <img
                           src={post.full_picture}
                           alt="Facebook Post"
-                          className="absolute inset-0 object-cover duration-500 hover:scale-110 hover:duration-500"
+                          className="object-cover duration-500 hover:scale-110 hover:duration-500"
                         />
                       ) : (
-                        <p>{post.message}</p>
+                        <img
+                          src={`/img/top/${noImage}`}
+                          alt="画像はありません"
+                          className="object-contain"
+                        />
                       )}
                     </div>
                     {/* <div className="relative min-w-[600px] min-h-[300px] overflow-hidden">
@@ -203,10 +209,10 @@ const FacebookCarousel = () => {
                           // </ScrollArea>
                         )}
                     </DialogHeader>
-                    <DialogTitle className="text-center text-lg">
+                    <DialogTitle className="text-center text-lg mb-4">
                       {selectedPost && selectedPost.formattedDate}
                     </DialogTitle>
-                    <DialogDescription className="text-center text-lg break-words mb-8">
+                    <DialogDescription className="text-justify text-lg break-words mb-8">
                       {selectedPost && selectedPost.message}
                     </DialogDescription>
 
