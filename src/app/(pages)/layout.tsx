@@ -22,6 +22,9 @@ export const metadata: Metadata = {
       url: Favicon.src,
     },
   ],
+  robots: {
+    index: false, // noindexの設定
+  },
 };
 
 export default function RootLayout({

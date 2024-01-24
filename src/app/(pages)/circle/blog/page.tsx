@@ -128,7 +128,7 @@ const BlogPage = () => {
                     <Card className="md:flex md:items-start w-full py-6">
                       <CardHeader className="pt-0 px-0 md:py-0">
                         {post.full_picture ? (
-                          <div className="max-w-xs md:w-[320px] mx-auto md:pl-6">
+                          <div className="max-w-xs md:max-w-[500px] mx-auto md:pl-6">
                             <img
                               className="object-cover"
                               src={post.full_picture}
@@ -162,11 +162,8 @@ const BlogPage = () => {
                             {post.formattedDate}
                           </CardDescription>
                         </CardTitle>
-                        <span className="2xl:hidden whitespace-pre-wrap break-words">
+                        <span className="whitespace-pre-wrap break-words">
                           {limitedMessage}
-                        </span>
-                        <span className="hidden 2xl:block break-words">
-                          {post.message}
                         </span>
                       </CardContent>
                     </Card>
