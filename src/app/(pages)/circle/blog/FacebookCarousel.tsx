@@ -212,7 +212,7 @@ const FacebookCarousel = () => {
                     <DialogTitle className="text-center text-lg mb-4">
                       {selectedPost && selectedPost.formattedDate}
                     </DialogTitle>
-                    <DialogDescription className="text-justify text-lg break-words mb-8">
+                    <DialogDescription className="text-justify text-lg whitespace-pre-wrap break-words mb-8">
                       {selectedPost && selectedPost.message}
                     </DialogDescription>
 
