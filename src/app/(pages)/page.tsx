@@ -39,7 +39,7 @@ import Flow from "./Flow";
 import Mainvisual from "./Mainvisual";
 import Separator from "./Separator";
 import WorryCard from "./WorryCard";
-import FacebookCarousel from "./circle/schedule/FacebookCarousel";
+import FacebookCarousel from "./circle/blog/FacebookCarousel";
 import LatestEvent from "./circle/schedule/LatestEvent";
 
 export default function Home() {
