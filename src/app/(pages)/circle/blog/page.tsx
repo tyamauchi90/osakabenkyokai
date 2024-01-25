@@ -169,7 +169,7 @@ const BlogPage = () => {
                     </Card>
                   </DialogTrigger>
                   <DialogContent className="m-auto max-w-[90vw] max-h-[90vh] overflow-y-scroll break-words">
-                    <div className="w-[80vw] mx-auto my-[5vh]">
+                    <div className="w-[75vw] mx-auto my-[5vh]">
                       <DialogHeader className="flex flex-col justify-center items-center">
                         {selectedPost &&
                           Array.isArray(selectedPost.imgUrls) &&

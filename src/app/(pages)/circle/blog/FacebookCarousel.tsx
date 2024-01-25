@@ -171,7 +171,7 @@ const FacebookCarousel = () => {
                   </SplideSlide>
                 </DialogTrigger>
                 <DialogContent className="m-auto p-7 max-w-[90vw] max-h-[90vh] overflow-y-auto">
-                  <div className="w-[80vw] mx-auto my-[5vh]">
+                  <div className="w-[75vw] mx-auto my-[5vh]">
                     <DialogHeader>
                       {selectedPost &&
                         Array.isArray(selectedPost.imgUrls) &&
