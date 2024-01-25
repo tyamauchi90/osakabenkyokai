@@ -53,7 +53,7 @@ function EventLists() {
 
             return (
               <li key={post.id} className="w-fll m-10">
-                <Link href={`/circle/schedule/${post.id}`}>
+                <Link href={`/circle/event/${post.id}`}>
                   <Card>
                     <CardHeader>
                       <CardTitle>{post.title}</CardTitle>

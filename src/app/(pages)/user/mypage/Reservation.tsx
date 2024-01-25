@@ -4,7 +4,7 @@ import { useToast } from "@/app/components/shadcn/ui/use-toast";
 import { TimestampType } from "@/app/type/TimestampType";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useTimestampFormatter } from "../../circle/schedule/useTimestampFormatter";
+import { useTimestampFormatter } from "../../circle/event/useTimestampFormatter";
 import { useFetchMyReservation } from "./useFetchMyReservation";
 
 const Reservation = () => {

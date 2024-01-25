@@ -63,14 +63,14 @@ const Header = () => {
                 </Link>
               </NavigationMenuItem>
 
-              {/* スケジュール */}
+              {/* イベント */}
               <NavigationMenuItem>
-                <Link href="/circle/schedule" legacyBehavior passHref>
+                <Link href="/circle/event" legacyBehavior passHref>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex items-center gap-2`}
                   >
                     <CalendarClock />
-                    スケジュール
+                    イベント
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>

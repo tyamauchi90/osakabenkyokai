@@ -276,7 +276,9 @@ export default function PolicyPage() {
           />
         </dl>
         <hr className="border-gray-100 my-12" />
-        <h1 className="text-4xl text-center my-7">プライバシーポリシー</h1>
+        <h1 className="text-2xl sm:text-4xl text-center my-7">
+          プライバシーポリシー
+        </h1>
         <dl className="space-y-4">
           <Definition title="サービス提供元" content="おおさか勉強会" />
           <Definition title="所在地" content="請求があれば遅滞なく開示します" />

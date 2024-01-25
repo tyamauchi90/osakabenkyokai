@@ -54,7 +54,7 @@ import {
 } from "@/app/components/shadcn/ui/form";
 import { Input } from "@/app/components/shadcn/ui/input";
 import { TimestampType } from "@/app/type/TimestampType";
-import { useTimestampFormatter } from "../circle/schedule/useTimestampFormatter";
+import { useTimestampFormatter } from "../circle/event/useTimestampFormatter";
 
 const formSchema = z.object({
   title: z.string().min(1, { message: "タイトルを入力してください" }),
@@ -152,7 +152,7 @@ function PopupEventLists() {
 
   const fetchPost = async (id: string) => {
     try {
-      const res = await axios.get(`/circle/schedule/api/${id}`);
+      const res = await axios.get(`/circle/evnet/api/${id}`);
       setPost(res.data);
       form.setValue("title", res.data?.title || "");
       if (res.data?.eventDate) {
@@ -177,7 +177,7 @@ function PopupEventLists() {
         const postRef = doc(db, "posts", id);
         if (confirm("本当に削除していいですか？")) {
           await deleteDoc(postRef);
-          router.push("/circle/schedule/");
+          router.push("/circle/evnet/");
           toast({
             title: "削除完了しました",
             description: "削除内容に間違いがないか再度ご確認ください。",

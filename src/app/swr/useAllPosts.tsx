@@ -10,7 +10,7 @@ export default function useAllPosts() {
     data: posts,
     error,
     isLoading,
-  } = useSWR("/circle/schedule/api/allposts", fetcher);
+  } = useSWR("/circle/event/api/allposts", fetcher);
 
   return {
     data: posts,

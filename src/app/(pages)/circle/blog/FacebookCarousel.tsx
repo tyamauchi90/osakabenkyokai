@@ -79,10 +79,10 @@ const FacebookCarousel = () => {
             speed: 500,
             easing: "ease",
             cover: true,
-            fixedWidth: "34%",
-            fixedHeight: "400px",
+            fixedWidth: "50%",
+            fixedHeight: "500px",
             width: "100%",
-            // height: 600,
+            height: 600,
             focus: "center",
             rewind: true,
             wheel: true,
@@ -94,12 +94,14 @@ const FacebookCarousel = () => {
             lazyLoad: "nearby",
             preloadPages: 1,
             breakpoints: {
-              768: {
+              1024: {
                 fixedWidth: "50%",
+                fixedHeight: "350px",
                 perPage: 3,
               },
               640: {
                 fixedWidth: "100%",
+                fixedHeight: "350px",
                 perPage: 1,
               },
             },
@@ -134,21 +136,21 @@ const FacebookCarousel = () => {
                       setSelectedPost(post);
                     }}
                   >
-                    <p className="text-center text-gray-500 py-4 opacity-100">
+                    <p className="text-center text-gray-500 mt-4 py-4 opacity-100">
                       {post.formattedDate}
                     </p>
-                    <div className="flex items-center justify-center overflow-hidden">
+                    <div className="relative h-[350px] sm:h-[380px] flex items-center justify-center overflow-hidden">
                       {post.full_picture ? (
                         <img
                           src={post.full_picture}
                           alt="Facebook Post"
-                          className="object-cover duration-500 hover:scale-110 hover:duration-500"
+                          className="absolute inset-0 duration-500 hover:scale-110 hover:duration-500"
                         />
                       ) : (
                         <img
                           src={`/img/top/${noImage}`}
                           alt="画像はありません"
-                          className="object-contain"
+                          className="absolute inset-0"
                         />
                       )}
                     </div>

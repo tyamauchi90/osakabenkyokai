@@ -94,7 +94,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`/circle/schedule/api/${id}`);
+        const res = await axios.get(`/circle/event/api/${id}`);
         setPost(res.data);
         form.setValue("title", res.data?.title || "");
         if (res.data?.eventDate) {
@@ -115,7 +115,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
   if (!post) {
     return (
       <div className="container h-screen my-7">
-        <p>投稿取得中・・・</p>
+        <p>詳細取得中・・・</p>
         <LoadingSkelton />
       </div>
     );
@@ -149,7 +149,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
           const postRef = doc(db, "posts", id);
           await updateDoc(postRef, data);
 
-          router.push("/circle/schedule");
+          router.push("/circle/event");
           router.refresh();
           toast({
             title: "編集完了しました",
@@ -184,7 +184,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
         const postRef = doc(db, "posts", id);
         if (confirm("本当に削除していいですか？")) {
           await deleteDoc(postRef);
-          router.push("/circle/schedule/");
+          router.push("/circle/event/");
           toast({
             title: "削除完了しました",
             description: "削除内容に間違いがないか再度ご確認ください。",
@@ -215,7 +215,7 @@ const PostDetailPage = ({ params }: { params: { id: string } }) => {
     <>
       <div className="container my-12">
         <h2 className="text-center text-2xl sm:text-4xl mb-12 tracking-widest">
-          スケジュール詳細
+          イベント詳細
         </h2>
         <Card className="w-full">
           <CardHeader>

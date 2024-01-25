@@ -57,11 +57,11 @@ const Footer = () => {
                     </li>
                     <li>
                       <Link
-                        href="/circle/schedule"
+                        href="/circle/event"
                         className="flex items-center gap-2"
                       >
                         <CalendarClock />
-                        スケジュール
+                        イベント
                       </Link>
                     </li>
                     {user && (

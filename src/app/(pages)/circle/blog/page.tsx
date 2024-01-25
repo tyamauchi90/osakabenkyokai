@@ -125,8 +125,8 @@ const BlogPage = () => {
               >
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="md:flex md:items-start w-full py-6">
-                      <CardHeader className="pt-0 px-0 md:py-0">
+                    <Card className="lg:flex lg:items-start w-full py-6">
+                      <CardHeader className="pt-0 px-0 lg:py-0">
                         {post.full_picture ? (
                           <div className="max-w-xs md:max-w-[500px] mx-auto md:pl-6">
                             <img
@@ -156,7 +156,7 @@ const BlogPage = () => {
                           )}
                         </div> */}
                       </CardHeader>
-                      <CardContent className="py-0 md:flex-1 text-lg mb-4">
+                      <CardContent className="flex flex-col items-center py-0 lg:flex-1 text-lg mb-4">
                         <CardTitle className="mb-4 text-center">
                           <CardDescription>
                             {post.formattedDate}
