@@ -294,7 +294,7 @@ export default function PolicyPage() {
           />
           <Definition
             title="返金ポリシー"
-            content="お支払い金額の3.6%を引いた額を返金します。"
+            content="返金の際には、お支払い金額からStripeの手数料（3.6%）を差し引いた額を返金します"
           />
           <Definition
             title="引渡時期"
