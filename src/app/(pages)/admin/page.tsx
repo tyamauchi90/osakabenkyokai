@@ -15,8 +15,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components/shadcn/ui/tabs";
-import CreateEventForm from "../circle/schedule/new/CreateEventForm";
-import { useTimestampFormatter } from "../circle/schedule/useTimestampFormatter";
+import CreateEventForm from "../circle/event/new/CreateEventForm";
+import { useTimestampFormatter } from "../circle/event/useTimestampFormatter";
 import AllReservations, { CellType, columns } from "./AllReservations";
 import PopupEventLists from "./PopupEventLists";
 import { useFetchAllReservations } from "./useFetchAllReservations";

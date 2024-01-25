@@ -63,7 +63,7 @@ const HeaderSp = () => {
     },
     closed: {
       transition: {
-        staggerChildren: 0.05,
+        staggerChildren: 0.12,
         staggerDirection: -1,
       },
     },
@@ -191,11 +191,11 @@ const HeaderSp = () => {
                       icon={<Pencil />}
                       text="ブログ"
                     />
-                    {/* スケジュール */}
+                    {/* イベント */}
                     <NavItem
-                      href="/circle/schedule"
+                      href="/circle/event"
                       icon={<CalendarClock />}
-                      text="スケジュール"
+                      text="イベント"
                     />
 
                     {/* マイページ */}

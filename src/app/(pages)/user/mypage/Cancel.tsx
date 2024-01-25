@@ -21,7 +21,7 @@
 //       // const id = params.id;
 
 //       // // 仮予約データが存在するかチェック
-//       const _res = await fetch(`/circle/schedule/api/${id}/findUserId`, {
+//       const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -50,12 +50,12 @@
 //         if (!overwrite) {
 //           form.reset();
 //           setLoading(false);
-//           router.push(`/circle/schedule/${id}/`);
+//           router.push(`/circle/event/${id}/`);
 //           return;
 //         }
 //       }
 
-//       const res = await fetch(`/circle/schedule/api/${id}`, {
+//       const res = await fetch(`/circle/event/api/${id}`, {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",

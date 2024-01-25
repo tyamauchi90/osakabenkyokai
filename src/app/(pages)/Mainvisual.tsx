@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../components/shadcn/ui/popover";
-import LatestEvent from "./circle/schedule/LatestEvent";
+import LatestEvent from "./circle/event/LatestEvent";
 
 const Mainvisual = () => {
   const images = [

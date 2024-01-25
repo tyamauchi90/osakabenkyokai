@@ -40,7 +40,7 @@ import Mainvisual from "./Mainvisual";
 import Separator from "./Separator";
 import WorryCard from "./WorryCard";
 import FacebookCarousel from "./circle/blog/FacebookCarousel";
-import LatestEvent from "./circle/schedule/LatestEvent";
+import LatestEvent from "./circle/event/LatestEvent";
 
 export default function Home() {
   const startYear = 2010;
@@ -317,11 +317,9 @@ export default function Home() {
             お申込みはこちら
           </h2>
           <p className="py-3 sm:py-5 text-xl sm:text-4xl tracking-widest">
-            スケジュール
+            イベント
           </p>
-          <Suspense
-            fallback={<p className="mt-4">最新スケジュール　Loading...</p>}
-          >
+          <Suspense fallback={<p className="mt-4">最新イベント　Loading...</p>}>
             <LatestEvent />
             {!user && (
               <span className="tracking-wider">

@@ -11,7 +11,7 @@ export default function useLatestPost() {
     error,
     isLoading,
     mutate,
-  } = useSWR(`/circle/schedule/api/latestpost`, fetcher);
+  } = useSWR(`/circle/event/api/latestpost`, fetcher);
 
   return {
     data: latestPost,

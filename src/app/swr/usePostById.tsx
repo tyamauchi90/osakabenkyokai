@@ -11,7 +11,7 @@ export default function usePostById(id: string) {
     error,
     isLoading,
     mutate,
-  } = useSWR(`/circle/schedule/api/${id}`, fetcher);
+  } = useSWR(`/circle/event/api/${id}`, fetcher);
 
   return {
     data: post,

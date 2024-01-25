@@ -86,7 +86,7 @@ export default function CreateEventForm() {
     } finally {
       setLoading(false);
       form.reset();
-      router.push("/circle/schedule/new");
+      router.push("/circle/event/new");
     }
   };
 
@@ -97,7 +97,7 @@ export default function CreateEventForm() {
     eventDate: Date
   ) => {
     try {
-      await fetch(`/circle/schedule/api/new`, {
+      await fetch(`/circle/event/api/new`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

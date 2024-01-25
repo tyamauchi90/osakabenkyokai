@@ -3,7 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { useTimestampFormatter } from "../(pages)/circle/schedule/useTimestampFormatter";
+import { useTimestampFormatter } from "../(pages)/circle/event/useTimestampFormatter";
 import { WhileInListsVariants } from "../(pages)/variants";
 import useAllPosts from "../swr/useAllPosts";
 import { postType } from "../type/postType";
@@ -79,7 +79,7 @@ export const WhileInEventLists = ({ className }: PropsType) => {
                   className="w-fll"
                   variants={WhileInListsVariants}
                 >
-                  <Link href={`/circle/schedule/${post.id}`}>
+                  <Link href={`/circle/event/${post.id}`}>
                     <Card>
                       <CardHeader>
                         <CardTitle>{post.title}</CardTitle>

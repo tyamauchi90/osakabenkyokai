@@ -276,7 +276,9 @@ export default function PolicyPage() {
           />
         </dl>
         <hr className="border-gray-100 my-12" />
-        <h1 className="text-4xl text-center my-7">プライバシーポリシー</h1>
+        <h1 className="text-2xl sm:text-4xl text-center my-7">
+          プライバシーポリシー
+        </h1>
         <dl className="space-y-4">
           <Definition title="サービス提供元" content="おおさか勉強会" />
           <Definition title="所在地" content="請求があれば遅滞なく開示します" />
@@ -294,10 +296,10 @@ export default function PolicyPage() {
             title="返金ポリシー"
             content="お支払い金額の3.6%を引いた額を返金します。"
           />
-          {/* <Definition
+          <Definition
             title="引渡時期"
             content="セミナー参加費を支払った時点で、参加資格が確定します。"
-          /> */}
+          />
           <Definition
             title="受け付け可能な決済手段"
             content="クレジットカード（Stripe経由）"

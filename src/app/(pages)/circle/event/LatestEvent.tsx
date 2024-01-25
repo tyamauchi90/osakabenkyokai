@@ -67,7 +67,7 @@ function LatestEvent({ className }: PropsType) {
 export default LatestEvent;
 
 {
-  /* <Link href={`/circle/schedule/${latestPost.id}`}>
+  /* <Link href={`/circle/event/${latestPost.id}`}>
           <Card className="m-10">
             <CardHeader>
               <CardTitle>{latestPost.title}</CardTitle>
