@@ -65,7 +65,7 @@ const AfterPayTab: FC<IdType> = ({ id }) => {
         try {
           // const id = params.id;
 
-          // // 仮予約データが存在するかチェック
+          // 仮予約データが存在するかチェック
           const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
             method: "POST",
             headers: {
