@@ -73,7 +73,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
 
     fetchCheckoutSession();
   }, []);
-  // console.log(id);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -94,6 +93,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             });
           }
           const res = await fetch(`/api/webhooks`, {
+            // const res = await fetch(`/circle/event/api/${id}/beforePay`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -121,6 +121,13 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             description: "申込み内容に間違いがないか再度ご確認ください。",
           });
         } catch (error: any) {
+          setLoading(false);
+          form.reset();
+          // router.push("/user/mypage/");
+          toast({
+            title: "参加申込みに失敗しました",
+            description: "再度お試しください。",
+          });
           console.error(
             "勉強会への参加申込み中にエラーが発生しました: ",
             error
