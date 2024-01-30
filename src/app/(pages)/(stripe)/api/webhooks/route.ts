@@ -79,10 +79,10 @@ export async function POST(req: NextRequest) {
   // const { id, user, userName } = request;
   const { id, user, userName, existingApplicationDocData, overwrite } = request;
 
-  if (!id || !user || !userName) {
-    console.error("Required data is missing.");
-    return new NextResponse("Required data is missing", { status: 400 });
-  }
+  // if (!id || !user || !userName) {
+  //   console.error("Required data is missing.");
+  //   return new NextResponse("Required data is missing", { status: 400 });
+  // }
 
   let event;
 
