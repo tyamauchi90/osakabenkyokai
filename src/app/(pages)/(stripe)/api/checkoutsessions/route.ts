@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     // チェックアウトセッション作成
     checkoutSession = await stripe.checkout.sessions.create({
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-      // success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
       payment_method_types: ["card"],
       mode: "payment",

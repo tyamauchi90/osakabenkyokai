@@ -1,12 +1,18 @@
 import { User } from "firebase/auth";
-import { Timestamp, addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { Timestamp, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { db } from "../../../../../firebase/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const addData = async function (id: string, user: User, userName: string) {
+const addData = async function (
+  id: string,
+  user: User,
+  userName: string,
+  existingApplicationDocData: any,
+  overwrite: boolean
+) {
   const postRef = doc(db, "posts", id);
   const postSnapshot = await getDoc(postRef);
   const postEventData = postSnapshot.data();
@@ -18,8 +24,43 @@ const addData = async function (id: string, user: User, userName: string) {
     applyDate: Timestamp.now(),
     isPaid: true,
   };
+
   const applicationRef = collection(postRef, "applications");
-  await addDoc(applicationRef, applicationData);
+
+  try {
+    if (existingApplicationDocData && overwrite) {
+      // データが存在し、上書きが許可されている場合、上書き
+      const existingApplicationRef = doc(applicationRef, user.uid);
+      await setDoc(existingApplicationRef, applicationData);
+    } else if (!existingApplicationDocData) {
+      // データが存在しない場合、新規登録
+      const newApplicationRef = doc(applicationRef, user.uid);
+      await setDoc(newApplicationRef, applicationData);
+    } else {
+      // existingApplicationDocData が undefined の場合のエラーハンドリング
+      console.error("existingApplicationDocData is undefined");
+      throw new Error("existingApplicationDocData is undefined");
+    }
+
+    return new NextResponse(JSON.stringify({ message: "Form data received" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error: any) {
+    // return new NextResponse(
+    //   JSON.stringify({
+    //     error: "ポスト処理が異常終了しました。",
+    //   }),
+    //   {
+    //     status: 500,
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+    console.error(error.message || error);
+    throw new Error("ポスト処理が異常終了しました。");
+  }
 };
 
 // POST : 本予約
@@ -35,7 +76,8 @@ export async function POST(req: NextRequest) {
 
   // JSONデータを解析
   const request = JSON.parse(rawBody);
-  const { id, user, userName } = request;
+  // const { id, user, userName } = request;
+  const { id, user, userName, existingApplicationDocData, overwrite } = request;
 
   if (!id || !user || !userName) {
     console.error("Required data is missing.");
@@ -56,7 +98,13 @@ export async function POST(req: NextRequest) {
 
     if (event.type === "checkout.session.completed") {
       try {
-        await addData(id, user, userName);
+        await addData(
+          id,
+          user,
+          userName,
+          existingApplicationDocData,
+          overwrite
+        );
 
         return new NextResponse("Form data received", {
           status: 200,
