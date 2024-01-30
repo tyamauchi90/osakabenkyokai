@@ -6,19 +6,15 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(req: Request) {
+  let checkoutSession;
   try {
     // チェックアウトセッション作成
-    const checkoutSession = await stripe.checkout.sessions.create({
+    checkoutSession = await stripe.checkout.sessions.create({
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       // success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
       payment_method_types: ["card"],
       mode: "payment",
-      // metadata: {
-      //   id,
-      //   userId: user.uid,
-      //   userName: userName,
-      // },
       line_items: [
         {
           price: process.env.NEXT_PUBLIC_STRIPE_PRODUCT_KEY,
@@ -26,10 +22,10 @@ export async function POST(req: Request) {
         },
       ],
     });
-
-    return new NextResponse(JSON.stringify({ sessionId: checkoutSession.id }));
   } catch (error: any) {
-    console.error("Stripeエラー:", error.message);
+    console.error("Stripeエラー:", error);
     return new NextResponse("Stripeでエラーが発生しました", { status: 500 });
   }
+
+  return new NextResponse(JSON.stringify({ sessionId: checkoutSession.id }));
 }
