@@ -44,8 +44,6 @@ export async function POST(req: NextRequest) {
 
   let event;
 
-  console.log(sig);
-
   try {
     if (!sig) {
       throw new Error("No signature provided");
@@ -55,30 +53,30 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+
+    if (event.type === "checkout.session.completed") {
+      try {
+        await addData(id, user, userName);
+
+        return new NextResponse("Form data received", {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (firestoreError) {
+        console.error(`Firestore Error: ${firestoreError}`);
+        return new NextResponse("Failed to save data to Firestore", {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    }
   } catch (err: any) {
     console.error(`Webhook Error: ${err.message}`);
     return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });
-  }
-
-  if (event.type === "checkout.session.completed") {
-    try {
-      await addData(id, user, userName);
-
-      return new NextResponse("Form data received", {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (firestoreError) {
-      console.error(`Firestore Error: ${firestoreError}`);
-      return new NextResponse("Failed to save data to Firestore", {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }
   }
 }
 
