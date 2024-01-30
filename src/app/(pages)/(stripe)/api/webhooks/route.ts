@@ -112,14 +112,19 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
         });
-      } catch (firestoreError) {
-        console.error(`Firestore Error: ${firestoreError}`);
-        return new NextResponse("Failed to save data to Firestore", {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+      } catch (error: any) {
+        console.error(error.message || error);
+        return new NextResponse(
+          JSON.stringify({
+            error: "ポスト処理が異常終了しました。",
+          }),
+          {
+            status: 500,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       }
     }
   } catch (err: any) {
