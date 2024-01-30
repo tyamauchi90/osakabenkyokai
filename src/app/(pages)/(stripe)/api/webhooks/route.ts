@@ -24,11 +24,11 @@ const addData = async function (id: string, user: User, userName: string) {
 
 // POST : 本予約
 export async function POST(req: NextRequest) {
-  const contentType = req.headers.get("content-type");
-  if (contentType !== "application/json") {
-    console.error("Content-Typeがapplication/jsonではありません。");
-    return new NextResponse("Invalid Content-Type", { status: 400 });
-  }
+  // const contentType = req.headers.get("content-type");
+  // if (contentType !== "application/json") {
+  //   console.error("Content-Typeがapplication/jsonではありません。");
+  //   return new NextResponse("Invalid Content-Type", { status: 400 });
+  // }
 
   const sig = req.headers?.get("stripe-signature");
   const rawBody = await req.text();
