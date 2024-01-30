@@ -86,7 +86,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         setLoading(true);
 
         try {
-          // 仮予約データが存在するかチェック
+          // 予約データが存在するかチェック
           const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
             method: "POST",
             headers: {
@@ -112,7 +112,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           const existingApplicationDocData = _result.existingApplicationDocData;
           let overwrite = false;
           if (_result.exists) {
-            overwrite = confirm("すでに仮予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
+            overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
             if (!overwrite) {
               form.reset();
               setLoading(false);
