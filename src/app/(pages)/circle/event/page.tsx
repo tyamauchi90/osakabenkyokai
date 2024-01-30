@@ -11,7 +11,7 @@ const EventPage = () => {
   const userRole = useUserRole(user ? user.uid : null);
   return (
     <>
-      <div className="flex flex-col items-center w-full gap-12 my-12">
+      <div className="container flex flex-col items-center w-full gap-12 my-12">
         <h2 className="text-2xl sm:text-4xl">イベント一覧</h2>
 
         {(userRole === "admin" || userRole === "maseter") && (

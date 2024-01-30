@@ -34,7 +34,7 @@ export const WhileInEventLists = ({ className }: PropsType) => {
 
   return (
     <>
-      <div className="container">
+      <div className="w-full">
         {error && <div>Error loading data</div>}
         {isLoading && (
           <div className="w-full h-screen sm:m-7">
@@ -76,7 +76,7 @@ export const WhileInEventLists = ({ className }: PropsType) => {
               return (
                 <motion.li
                   key={post.id}
-                  className="w-fll"
+                  className="w-full"
                   variants={WhileInListsVariants}
                 >
                   <Link href={`/circle/event/${post.id}`}>
