@@ -7,10 +7,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 export async function POST(req: Request) {
   try {
-    // 本予約
-    // const request = await req.json();
-    // const { id, user, userName } = request;
-
     // チェックアウトセッション作成
     const checkoutSession = await stripe.checkout.sessions.create({
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
