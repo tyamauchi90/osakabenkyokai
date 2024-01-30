@@ -6,63 +6,6 @@ import { db } from "../../../../../firebase/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const addData = async function (
-  id: string,
-  user: User,
-  userName: string,
-  existingApplicationDocData: any,
-  overwrite: boolean
-) {
-  const postRef = doc(db, "posts", id);
-  const postSnapshot = await getDoc(postRef);
-  const postEventData = postSnapshot.data();
-
-  const applicationData = {
-    eventDate: postEventData?.eventDate || null,
-    userId: user?.uid,
-    userName: userName,
-    applyDate: Timestamp.now(),
-    isPaid: true,
-  };
-
-  const applicationRef = collection(postRef, "applications");
-
-  try {
-    if (existingApplicationDocData && overwrite) {
-      // データが存在し、上書きが許可されている場合、上書き
-      const existingApplicationRef = doc(applicationRef, user.uid);
-      await setDoc(existingApplicationRef, applicationData);
-    } else if (!existingApplicationDocData) {
-      // データが存在しない場合、新規登録
-      const newApplicationRef = doc(applicationRef, user.uid);
-      await setDoc(newApplicationRef, applicationData);
-    } else {
-      // existingApplicationDocData が undefined の場合のエラーハンドリング
-      console.error("existingApplicationDocData is undefined");
-      throw new Error("existingApplicationDocData is undefined");
-    }
-
-    return new NextResponse(JSON.stringify({ message: "Form data received" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error: any) {
-    // return new NextResponse(
-    //   JSON.stringify({
-    //     error: "ポスト処理が異常終了しました。",
-    //   }),
-    //   {
-    //     status: 500,
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-    console.error(error.message || error);
-    throw new Error("ポスト処理が異常終了しました。");
-  }
-};
-
 // POST : 本予約
 export async function POST(req: NextRequest) {
   // const contentType = req.headers.get("content-type");
@@ -98,6 +41,64 @@ export async function POST(req: NextRequest) {
 
     if (event.type === "checkout.session.completed") {
       try {
+        const addData = async function (
+          id: string,
+          user: User,
+          userName: string,
+          existingApplicationDocData: any,
+          overwrite: boolean
+        ) {
+          const postRef = doc(db, "posts", id);
+          const postSnapshot = await getDoc(postRef);
+          const postEventData = postSnapshot.data();
+
+          const applicationData = {
+            eventDate: postEventData?.eventDate || null,
+            userId: user?.uid,
+            userName: userName,
+            applyDate: Timestamp.now(),
+            isPaid: true,
+          };
+
+          const applicationRef = collection(postRef, "applications");
+
+          try {
+            if (existingApplicationDocData && overwrite) {
+              // データが存在し、上書きが許可されている場合、上書き
+              const existingApplicationRef = doc(applicationRef, user.uid);
+              await setDoc(existingApplicationRef, applicationData);
+            } else if (!existingApplicationDocData) {
+              // データが存在しない場合、新規登録
+              const newApplicationRef = doc(applicationRef, user.uid);
+              await setDoc(newApplicationRef, applicationData);
+            } else {
+              // existingApplicationDocData が undefined の場合のエラーハンドリング
+              console.error("existingApplicationDocData is undefined");
+              throw new Error("existingApplicationDocData is undefined");
+            }
+
+            return new NextResponse(
+              JSON.stringify({ message: "Form data received" }),
+              {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+          } catch (error: any) {
+            console.error(error.message || error);
+            return new NextResponse(
+              JSON.stringify({
+                error: "ポスト処理が異常終了しました。",
+              }),
+              {
+                status: 500,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+          }
+        };
         await addData(
           id,
           user,
