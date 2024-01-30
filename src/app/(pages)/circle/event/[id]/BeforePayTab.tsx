@@ -86,14 +86,8 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         setLoading(true);
 
         try {
-          const stripe = await getStripe();
-          if (stripe !== null && sessionId !== null) {
-            const { error } = await stripe.redirectToCheckout({
-              sessionId,
-            });
-          }
-          const res = await fetch(`/api/webhooks`, {
-            // const res = await fetch(`/circle/event/api/${id}/beforePay`, {
+          // 仮予約データが存在するかチェック
+          const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -102,6 +96,51 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               id,
               user,
               userName: formData.name,
+            }),
+          });
+
+          if (!_res.ok) {
+            const errorText = await _res.text(); // エラーの詳細を取得
+            console.error(
+              `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+            );
+            throw new Error("サーバーからの応答が正常ではありません。");
+          }
+
+          // overwriteの条件分岐
+          const _result = await _res.json();
+          const existingApplicationDocData = _result.existingApplicationDocData;
+          let overwrite = false;
+          if (_result.exists) {
+            overwrite = confirm("すでに仮予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
+            if (!overwrite) {
+              form.reset();
+              setLoading(false);
+              router.push(`/circle/event/${id}/`);
+              return;
+            }
+          }
+
+          const stripe = await getStripe();
+          if (stripe !== null && sessionId !== null) {
+            const { error } = await stripe.redirectToCheckout({
+              sessionId,
+            });
+          }
+          const res = await fetch(`/api/webhooks`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              // id,
+              // user,
+              // userName: formData.name,
+              id,
+              user,
+              userName: formData.name,
+              existingApplicationDocData,
+              overwrite,
             }),
           });
 
@@ -123,7 +162,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         } catch (error: any) {
           setLoading(false);
           form.reset();
-          // router.push("/user/mypage/");
           toast({
             title: "参加申込みに失敗しました",
             description: "再度お試しください。",

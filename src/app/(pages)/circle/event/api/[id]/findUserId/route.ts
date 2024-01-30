@@ -9,7 +9,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../../../firebase/client";
 
-// POST : 仮予約の重複チェック
+// POST : 予約の重複チェック
 export async function POST(req: NextRequest) {
   try {
     const request = await req.json();
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         userId: user?.uid,
         userName: userName,
         applyDate: Timestamp.now(),
-        isPaid: false,
+        isPaid: false || true,
       };
 
       const applicationRef = collection(postRef, "applications");
