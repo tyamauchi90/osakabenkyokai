@@ -1,5 +1,10 @@
-import { User } from "firebase/auth";
-import { Timestamp, collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  doc,
+  getDoc,
+  setDoc
+} from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../../../firebase/client";
 
@@ -7,7 +12,7 @@ import { db } from "../../../../../../../firebase/client";
 export async function POST(req: NextRequest) {
   try {
     const request = await req.json();
-    const { id, user, userName, existingApplicationDocData, overwrite } =
+    const { id, userId, userName, existingApplicationDocData, overwrite } =
       request;
 
     if (!id) {
@@ -18,7 +23,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (!user) {
+    if (!userId) {
       console.error("ユーザーが存在しません。");
       return new NextResponse(
         JSON.stringify({ error: "ユーザーが存在しません。" }),
@@ -36,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     const addData = async function (
       id: string,
-      user: User,
+      userId: string,
       userName: string,
       existingApplicationDocData: any,
       overwrite: boolean
@@ -48,8 +53,8 @@ export async function POST(req: NextRequest) {
       const applicationData = {
         postId: id,
         eventDate: postEventData?.eventDate || null,
-        userId: user?.uid,
-        userName: userName,
+        userId,
+        userName,
         applyDate: Timestamp.now(),
         isPaid: false,
       };
@@ -59,11 +64,11 @@ export async function POST(req: NextRequest) {
       try {
         if (existingApplicationDocData && overwrite) {
           // データが存在し、上書きが許可されている場合、上書き
-          const existingApplicationRef = doc(applicationRef, user.uid);
+          const existingApplicationRef = doc(applicationRef, userId);
           await setDoc(existingApplicationRef, applicationData);
         } else if (!existingApplicationDocData) {
           // データが存在しない場合、新規登録
-          const newApplicationRef = doc(applicationRef, user.uid);
+          const newApplicationRef = doc(applicationRef, userId);
           await setDoc(newApplicationRef, applicationData);
         } else {
           // existingApplicationDocData が undefined の場合のエラーハンドリング
@@ -93,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     return await addData(
       id,
-      user,
+      userId,
       userName,
       existingApplicationDocData,
       overwrite
