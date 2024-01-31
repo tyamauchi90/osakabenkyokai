@@ -6,46 +6,6 @@ import { firebaseAdmin } from "../../../../../firebase/admin";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const addData = async function (
-  id: string,
-  user: User,
-  userName: string,
-  existingApplicationDocData: any,
-  overwrite: boolean
-) {
-  const postRef = firebaseAdmin.firestore().doc(`posts/${id}`);
-  const postSnapshot = await postRef.get();
-  if (!postSnapshot.exists) {
-    console.error("No such document!");
-  } else {
-    const postEventData = postSnapshot.data();
-
-    const applicationData = {
-      eventDate: postEventData?.eventDate || null,
-      userId: user?.uid,
-      userName: userName,
-      applyDate: Timestamp.now(),
-      isPaid: true,
-    };
-
-    const applicationsRef = postRef.collection("applications");
-
-    try {
-      const applicationRef = applicationsRef.doc(user.uid);
-      if (existingApplicationDocData && overwrite) {
-        await applicationRef.set(applicationData);
-      } else if (!existingApplicationDocData) {
-        await applicationRef.set(applicationData);
-      } else {
-        throw new Error("existingApplicationDocData is undefined");
-      }
-    } catch (error: any) {
-      console.error(error.message || error);
-      throw error;
-    }
-  }
-};
-
 export async function POST(req: NextRequest) {
   const sig = req.headers?.get("stripe-signature");
   const rawBody = await req.text();
@@ -67,6 +27,46 @@ export async function POST(req: NextRequest) {
 
     if (event.type === "checkout.session.completed") {
       try {
+        const addData = async function (
+          id: string,
+          user: User,
+          userName: string,
+          existingApplicationDocData: any,
+          overwrite: boolean
+        ) {
+          const postRef = firebaseAdmin.firestore().doc(`posts/${id}`);
+          const postSnapshot = await postRef.get();
+          if (!postSnapshot.exists) {
+            console.error("No such document!");
+          } else {
+            const postEventData = postSnapshot.data();
+
+            const applicationData = {
+              eventDate: postEventData?.eventDate || null,
+              userId: user?.uid,
+              userName: userName,
+              applyDate: Timestamp.now(),
+              isPaid: true,
+            };
+
+            const applicationsRef = postRef.collection("applications");
+
+            try {
+              const applicationRef = applicationsRef.doc(user.uid);
+              if (existingApplicationDocData && overwrite) {
+                await applicationRef.set(applicationData);
+              } else if (!existingApplicationDocData) {
+                await applicationRef.set(applicationData);
+              } else {
+                throw new Error("existingApplicationDocData is undefined");
+              }
+            } catch (error: any) {
+              console.error(error.message || error);
+              throw error;
+            }
+          }
+        };
+
         await addData(
           id,
           user,
