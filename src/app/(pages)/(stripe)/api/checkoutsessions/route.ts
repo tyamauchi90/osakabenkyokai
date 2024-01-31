@@ -6,6 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(req: Request) {
+  const { postId, user, userName } = await req.json();
   let checkoutSession;
   try {
     // チェックアウトセッション作成
@@ -20,11 +21,21 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
+      metadata: {
+        postId,
+        userId: user?.uid,
+        userName,
+      },
     });
   } catch (error: any) {
     console.error("Stripeエラー:", error);
     return new NextResponse("Stripeでエラーが発生しました", { status: 500 });
   }
 
-  return new NextResponse(JSON.stringify({ sessionId: checkoutSession.id }));
+  return new NextResponse(JSON.stringify({ sessionId: checkoutSession.id }), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }

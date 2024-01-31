@@ -17,14 +17,14 @@ import {
 } from "@/app/components/shadcn/ui/form";
 import { Input } from "@/app/components/shadcn/ui/input";
 import { useToast } from "@/app/components/shadcn/ui/use-toast";
+import getStripe from "@/app/stripe/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../../components/shadcn/ui/button";
 import { TabsContent } from "../../../../components/shadcn/ui/tabs";
-import getStripe from "../../../../stripe/stripe";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "名前を入力してください" }),
@@ -52,27 +52,27 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
     },
   });
 
-  useEffect(() => {
-    const fetchCheckoutSession = async () => {
-      try {
-        const res = await fetch("/api/checkoutsessions", {
-          method: "POST",
-        });
+  // useEffect(() => {
+  //   const fetchCheckoutSession = async () => {
+  //     try {
+  //       const res = await fetch("/api/checkoutsessions", {
+  //         method: "POST",
+  //       });
 
-        if (!res.ok) {
-          console.error("API Error:", res.statusText);
-          return;
-        }
+  //       if (!res.ok) {
+  //         console.error("API Error:", res.statusText);
+  //         return;
+  //       }
 
-        const data = await res.json(); // JSONデータに変換
-        setSessionId(data.sessionId);
-      } catch (error: any) {
-        console.error("Fetch Error:", error.message);
-      }
-    };
+  //       const data = await res.json(); // JSONデータに変換
+  //       setSessionId(data.sessionId);
+  //     } catch (error: any) {
+  //       console.error("Fetch Error:", error.message);
+  //     }
+  //   };
 
-    fetchCheckoutSession();
-  }, []);
+  //   fetchCheckoutSession();
+  // }, []);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -127,13 +127,42 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               sessionId,
             });
           }
+
+          const fetchCheckoutSession = async () => {
+            try {
+              const res = await fetch("/api/checkoutsessions", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  postId: id,
+                  user,
+                  userName: formData.name,
+                }),
+              });
+
+              if (!res.ok) {
+                console.error("API Error:", res.statusText);
+                return;
+              }
+
+              const data = await res.json(); // JSONデータに変換
+              setSessionId(data.sessionId);
+            } catch (error: any) {
+              console.error("Fetch Error:", error.message);
+            }
+          };
+          await fetchCheckoutSession();
+
+          // const res = await fetch(`/api/webhooks/client`, {
           const res = await fetch(`/api/webhooks`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              id,
+              postId: id,
               user,
               userName: formData.name,
               existingApplicationDocData,
