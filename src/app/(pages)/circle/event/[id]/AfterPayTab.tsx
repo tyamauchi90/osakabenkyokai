@@ -40,7 +40,6 @@ type IdType = {
 const AfterPayTab: FC<IdType> = ({ id }) => {
   const [loading, setLoading] = useState(false);
   const user = useAuthCurrentUser();
-  // const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -63,8 +62,6 @@ const AfterPayTab: FC<IdType> = ({ id }) => {
         setLoading(true);
 
         try {
-          // const id = params.id;
-
           // 仮予約データが存在するかチェック
           const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
             method: "POST",

@@ -133,9 +133,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              // id,
-              // user,
-              // userName: formData.name,
               id,
               user,
               userName: formData.name,
