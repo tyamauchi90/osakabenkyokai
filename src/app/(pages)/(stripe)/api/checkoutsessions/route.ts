@@ -26,8 +26,8 @@ export async function POST(req: Request) {
         postId,
         userId,
         userName,
-        existingApplicationDocData,
-        overwrite,
+        // existingApplicationDocData,
+        // overwrite,
       },
     });
   } catch (error: any) {
