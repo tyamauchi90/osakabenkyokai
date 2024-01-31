@@ -140,6 +140,8 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                   postId: id,
                   userId,
                   userName: formData.name,
+                  existingApplicationDocData,
+                  overwrite,
                 }),
               });
 
