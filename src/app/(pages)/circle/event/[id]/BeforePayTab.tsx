@@ -156,7 +156,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           await fetchCheckoutSession();
 
           // const res = await fetch(`/api/webhooks/client`, {
-          const res = await fetch(`/api/webhooks`, {
+          const res = await fetch("/api/webhooks", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

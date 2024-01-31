@@ -6,7 +6,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(req: Request) {
-  const { postId, user, userName } = await req.json();
+  const { postId, user, userName ,existingApplicationDocData,
+    overwrite} = await req.json();
   let checkoutSession;
   try {
     // チェックアウトセッション作成
@@ -25,6 +26,8 @@ export async function POST(req: Request) {
         postId,
         userId: user?.uid,
         userName,
+        existingApplicationDocData,
+              overwrite,
       },
     });
   } catch (error: any) {
