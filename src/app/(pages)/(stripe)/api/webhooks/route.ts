@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { firebaseAdmin } from "../../../../../firebase/admin";
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
 // POST : 本予約
 export async function POST(req: NextRequest) {
   // const contentType = req.headers.get("content-type");
@@ -31,7 +33,6 @@ export async function POST(req: NextRequest) {
     if (!sig) {
       throw new Error("No signature provided");
     }
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
     event = stripe.webhooks.constructEvent(
       rawBody,
       sig,
