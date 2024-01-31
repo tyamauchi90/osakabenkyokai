@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
             const postEventData = postSnapshot.data();
 
             const applicationData = {
+              postId: id,
               eventDate: postEventData?.eventDate || null,
               userId: user?.uid,
               userName: userName,
