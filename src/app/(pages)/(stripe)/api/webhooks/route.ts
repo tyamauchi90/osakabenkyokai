@@ -36,56 +36,48 @@ export async function POST(req: NextRequest) {
         ) {
           const postRef = firebaseAdmin.firestore().doc(`posts/${id}`);
           const postSnapshot = await postRef.get();
-          if (!postSnapshot.exists) {
-            console.error("No such document!");
-          } else {
-            const postEventData = postSnapshot.data();
+          const postEventData = postSnapshot.data();
 
-            const applicationData = {
-              postId: id,
-              eventDate: postEventData?.eventDate || null,
-              userId: user?.uid,
-              userName: userName,
-              applyDate: Timestamp.now(),
-              isPaid: true,
-            };
+          const applicationData = {
+            postId: id,
+            eventDate: postEventData?.eventDate || null,
+            userId: user?.uid,
+            userName: userName,
+            applyDate: Timestamp.now(),
+            isPaid: true,
+          };
 
-            const applicationsRef = postRef.collection("applications");
+          const applicationsRef = postRef.collection("applications");
 
-            try {
-              const applicationRef = applicationsRef.doc(user.uid);
-              if (existingApplicationDocData && overwrite) {
-                await applicationRef.set(applicationData);
-              } else if (!existingApplicationDocData) {
-                await applicationRef.set(applicationData);
-              } else {
-                throw new Error("existingApplicationDocData is undefined");
-              }
-
-              return new NextResponse(
-                JSON.stringify({ message: "Form data received" }),
-                { status: 200, headers: { "Content-Type": "application/json" } }
-              );
-            } catch (error: any) {
-              console.error(error.message || error);
-              throw error;
+          try {
+            const applicationRef = applicationsRef.doc(user.uid);
+            if (existingApplicationDocData && overwrite) {
+              await applicationRef.set(applicationData);
+            } else if (!existingApplicationDocData) {
+              await applicationRef.set(applicationData);
+            } else {
+              throw new Error("existingApplicationDocData is undefined");
             }
+          } catch (error: any) {
+            console.error(error.message || error);
+            throw error;
           }
         };
 
-        return await addData(
+        await addData(
           id,
           user,
           userName,
           existingApplicationDocData,
           overwrite
         );
-        //  new NextResponse("Form data received", {
-        //   status: 200,
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        // });
+
+        return new NextResponse("Form data received", {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
       } catch (error: any) {
         console.error(error.message || error);
         return new NextResponse(
