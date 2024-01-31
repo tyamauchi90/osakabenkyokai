@@ -1,4 +1,3 @@
-import { User } from "firebase/auth";
 import {
   Timestamp,
   collection,
@@ -13,7 +12,7 @@ import { db } from "../../../../../../../firebase/client";
 export async function POST(req: NextRequest) {
   try {
     const request = await req.json();
-    const { id, user, userName } = request;
+    const { id, userId, userName } = request;
 
     if (!id) {
       console.error("IDが未定義です。");
@@ -23,7 +22,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (!user) {
+    if (!userId) {
       console.error("ユーザーが存在しません。");
       return new NextResponse(
         JSON.stringify({ error: "ユーザーが存在しません。" }),
@@ -31,14 +30,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const findData = async function (id: string, user: User, userName: string) {
+    const findData = async function (
+      id: string,
+      userId: string,
+      userName: string
+    ) {
       const postRef = doc(db, "posts", id);
       const postSnapshot = await getDoc(postRef);
       const postEventData = postSnapshot.data();
 
       const applicationData = {
         eventDate: postEventData?.eventDate || null,
-        userId: user?.uid,
+        userId,
         userName: userName,
         applyDate: Timestamp.now(),
         isPaid: false || true,
@@ -59,7 +62,7 @@ export async function POST(req: NextRequest) {
       );
     };
 
-    return await findData(id, user, userName);
+    return await findData(id, userId, userName);
   } catch (error: any) {
     console.error(error.message || error);
     return new NextResponse(

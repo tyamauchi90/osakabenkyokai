@@ -41,6 +41,7 @@ type IdType = {
 const BeforePayTab: FC<IdType> = ({ id }) => {
   const [loading, setLoading] = useState(false);
   const user = useAuthCurrentUser();
+  const userId = user?.uid;
   const router = useRouter();
   const { toast } = useToast();
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -94,7 +95,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             },
             body: JSON.stringify({
               id,
-              user,
+              userId,
               userName: formData.name,
             }),
           });
@@ -137,7 +138,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                 },
                 body: JSON.stringify({
                   postId: id,
-                  user,
+                  userId,
                   userName: formData.name,
                 }),
               });
@@ -163,7 +164,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             },
             body: JSON.stringify({
               postId: id,
-              user,
+              userId,
               userName: formData.name,
               existingApplicationDocData,
               overwrite,

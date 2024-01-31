@@ -6,7 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export async function POST(req: Request) {
-  const { postId, user, userName ,existingApplicationDocData,
+  const { postId, userId, userName ,existingApplicationDocData,
     overwrite} = await req.json();
   let checkoutSession;
   try {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       ],
       metadata: {
         postId,
-        userId: user?.uid,
+        userId,
         userName,
         existingApplicationDocData,
               overwrite,
