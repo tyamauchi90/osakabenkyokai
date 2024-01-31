@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
   // JSONデータを解析
   const request = JSON.parse(rawBody);
   const { id, user, userName, existingApplicationDocData, overwrite } = request;
-  console.log(id, user, userName, existingApplicationDocData, overwrite);
 
   let event;
 
@@ -29,93 +28,72 @@ export async function POST(req: NextRequest) {
     );
 
     if (event.type === "checkout.session.completed") {
-      try {
-        const addData = async function (
-          id: string,
-          user: User,
-          userName: string,
-          existingApplicationDocData: any,
-          overwrite: boolean
-        ) {
-          const postRef = firebaseAdmin.firestore().collection("posts");
-          const postSnapshot = await postRef.get();
-          const postEventData = postSnapshot.data();
+      const addData = async function (
+        id: string,
+        user: User,
+        userName: string,
+        existingApplicationDocData: any,
+        overwrite: boolean
+      ) {
+        const postRef = firebaseAdmin.firestore().collection("posts");
+        const postSnapshot = await postRef.get();
+        const postEventData = postSnapshot.data();
 
-          const applicationData = {
-            eventDate: postEventData?.eventDate || null,
-            userId: user?.uid,
-            userName: userName,
-            applyDate: Timestamp.now(),
-            isPaid: true,
-          };
-
-          const applicationsRef = postRef.collection("applications");
-
-          try {
-            if (existingApplicationDocData && overwrite) {
-              // データが存在し、上書きが許可されている場合、上書き
-              const existingApplicationRef = applicationsRef.doc(user.uid);
-              await existingApplicationRef.set(applicationData);
-            } else if (!existingApplicationDocData) {
-              // データが存在しない場合、新規登録
-              const newApplicationRef = applicationsRef.doc(user.uid);
-              await newApplicationRef.set(applicationData);
-            } else {
-              // existingApplicationDocData が undefined の場合のエラーハンドリング
-              console.error("existingApplicationDocData is undefined");
-              throw new Error("existingApplicationDocData is undefined");
-            }
-
-            return new NextResponse(
-              JSON.stringify({ message: "Form data received" }),
-              {
-                status: 200,
-                headers: { "Content-Type": "application/json" },
-              }
-            );
-          } catch (error: any) {
-            console.error(error.message || error);
-            return new NextResponse(
-              JSON.stringify({
-                error: "ポスト処理が異常終了しました。",
-              }),
-              {
-                status: 500,
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              }
-            );
-          }
+        const applicationData = {
+          eventDate: postEventData?.eventDate || null,
+          userId: user?.uid,
+          userName: userName,
+          applyDate: Timestamp.now(),
+          isPaid: true,
         };
-        await addData(
-          id,
-          user,
-          userName,
-          existingApplicationDocData,
-          overwrite
-        );
 
-        return new NextResponse("Form data received", {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-      } catch (error: any) {
-        console.error(error.message || error);
-        return new NextResponse(
-          JSON.stringify({
-            error: "ポスト処理が異常終了しました。",
-          }),
-          {
-            status: 500,
-            headers: {
-              "Content-Type": "application/json",
-            },
+        const applicationsRef = postRef.collection("applications");
+
+        try {
+          if (existingApplicationDocData && overwrite) {
+            // データが存在し、上書きが許可されている場合、上書き
+            const existingApplicationRef = applicationsRef.doc(user.uid);
+            await existingApplicationRef.set(applicationData);
+          } else if (!existingApplicationDocData) {
+            // データが存在しない場合、新規登録
+            const newApplicationRef = applicationsRef.doc(user.uid);
+            await newApplicationRef.set(applicationData);
+          } else {
+            // existingApplicationDocData が undefined の場合のエラーハンドリング
+            console.error("existingApplicationDocData is undefined");
+            throw new Error("existingApplicationDocData is undefined");
           }
-        );
-      }
+
+          return new NextResponse(
+            JSON.stringify({ message: "Form data received" }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            }
+          );
+        } catch (error: any) {
+          console.error(error.message || error);
+          return new NextResponse(
+            JSON.stringify({
+              error: "ポスト処理が異常終了しました。",
+            }),
+            {
+              status: 500,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+      };
+      await addData(id, user, userName, existingApplicationDocData, overwrite);
+
+      return new NextResponse("Form data received", {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     }
   } catch (err: any) {
     console.error(`Webhook Error: ${err.message}`);
