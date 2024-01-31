@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { Timestamp, collection } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { firebaseAdmin } from "../../../../../firebase/admin";
@@ -8,24 +8,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 // POST : 本予約
 export async function POST(req: NextRequest) {
-  // const contentType = req.headers.get("content-type");
-  // if (contentType !== "application/json") {
-  //   console.error("Content-Typeがapplication/jsonではありません。");
-  //   return new NextResponse("Invalid Content-Type", { status: 400 });
-  // }
-
   const sig = req.headers?.get("stripe-signature");
   const rawBody = await req.text();
 
   // JSONデータを解析
   const request = JSON.parse(rawBody);
-  // const { id, user, userName } = request;
   const { id, user, userName, existingApplicationDocData, overwrite } = request;
-
-  // if (!id || !user || !userName) {
-  //   console.error("Required data is missing.");
-  //   return new NextResponse("Required data is missing", { status: 400 });
-  // }
+  console.log(id, user, userName, existingApplicationDocData, overwrite);
 
   let event;
 
@@ -48,7 +37,7 @@ export async function POST(req: NextRequest) {
           existingApplicationDocData: any,
           overwrite: boolean
         ) {
-          const postRef = firebaseAdmin.firestore().doc(`posts/${id}`);
+          const postRef = firebaseAdmin.firestore().collection("posts");
           const postSnapshot = await postRef.get();
           const postEventData = postSnapshot.data();
 
@@ -60,20 +49,16 @@ export async function POST(req: NextRequest) {
             isPaid: true,
           };
 
-          const applicationRef = collection(postRef, "applications");
+          const applicationsRef = postRef.collection("applications");
 
           try {
             if (existingApplicationDocData && overwrite) {
               // データが存在し、上書きが許可されている場合、上書き
-              const existingApplicationRef = firebaseAdmin
-                .firestore()
-                .doc(`posts/${id}/applications/${user.uid}`);
+              const existingApplicationRef = applicationsRef.doc(user.uid);
               await existingApplicationRef.set(applicationData);
             } else if (!existingApplicationDocData) {
               // データが存在しない場合、新規登録
-              const newApplicationRef = firebaseAdmin
-                .firestore()
-                .doc(`posts/${id}/applications/${user.uid}`);
+              const newApplicationRef = applicationsRef.doc(user.uid);
               await newApplicationRef.set(applicationData);
             } else {
               // existingApplicationDocData が undefined の場合のエラーハンドリング
