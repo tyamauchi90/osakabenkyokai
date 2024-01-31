@@ -67,19 +67,19 @@ export async function POST(req: NextRequest) {
           }
         };
 
-        await addData(
+        return await addData(
           id,
           user,
           userName,
           existingApplicationDocData,
           overwrite
         );
-        return new NextResponse("Form data received", {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        //  new NextResponse("Form data received", {
+        //   status: 200,
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        // });
       } catch (error: any) {
         console.error(error.message || error);
         return new NextResponse(
