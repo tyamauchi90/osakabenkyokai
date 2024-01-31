@@ -6,82 +6,94 @@ import { firebaseAdmin } from "../../../../../firebase/admin";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const getPostData = async () => {
-  const postRef = firebaseAdmin.firestore().collection("posts");
-  const postSnapshot = await postRef.get();
-  if (!postSnapshot.exists) {
-    throw new Error("No such document!");
-  }
-  return postSnapshot.data();
-};
-
-const addApplicationData = async (
+const addData = async function (
+  id: string,
   user: User,
   userName: string,
   existingApplicationDocData: any,
-  overwrite: boolean,
-  postEventData: any
-) => {
-  const applicationData = {
-    eventDate: postEventData?.eventDate || null,
-    userId: user?.uid,
-    userName: userName,
-    applyDate: Timestamp.now(),
-    isPaid: true,
-  };
-
-  const applicationsRef = firebaseAdmin
-    .firestore()
-    .collection("posts")
-    .collection("applications");
-
-  if (existingApplicationDocData && overwrite) {
-    const existingApplicationRef = applicationsRef.doc(user.uid);
-    await existingApplicationRef.set(applicationData);
-  } else if (!existingApplicationDocData) {
-    const newApplicationRef = applicationsRef.doc(user.uid);
-    await newApplicationRef.set(applicationData);
+  overwrite: boolean
+) {
+  const postRef = firebaseAdmin.firestore().doc(`posts/${id}`);
+  const postSnapshot = await postRef.get();
+  if (!postSnapshot.exists) {
+    console.error("No such document!");
   } else {
-    throw new Error("existingApplicationDocData is undefined");
+    const postEventData = postSnapshot.data();
+
+    const applicationData = {
+      eventDate: postEventData?.eventDate || null,
+      userId: user?.uid,
+      userName: userName,
+      applyDate: Timestamp.now(),
+      isPaid: true,
+    };
+
+    const applicationsRef = postRef.collection("applications");
+
+    try {
+      const applicationRef = applicationsRef.doc(user.uid);
+      if (existingApplicationDocData && overwrite) {
+        await applicationRef.set(applicationData);
+      } else if (!existingApplicationDocData) {
+        await applicationRef.set(applicationData);
+      } else {
+        throw new Error("existingApplicationDocData is undefined");
+      }
+    } catch (error: any) {
+      console.error(error.message || error);
+      throw error;
+    }
   }
 };
 
-// POST : 本予約
 export async function POST(req: NextRequest) {
-  try {
-    const sig = req.headers?.get("stripe-signature");
-    const rawBody = await req.text();
+  const sig = req.headers?.get("stripe-signature");
+  const rawBody = await req.text();
 
+  const request = JSON.parse(rawBody);
+  const { id, user, userName, existingApplicationDocData, overwrite } = request;
+
+  let event;
+
+  try {
     if (!sig) {
       throw new Error("No signature provided");
     }
-
-    const event = stripe.webhooks.constructEvent(
+    event = stripe.webhooks.constructEvent(
       rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
 
     if (event.type === "checkout.session.completed") {
-      const request = JSON.parse(rawBody);
-      const { id, user, userName, existingApplicationDocData, overwrite } =
-        request;
-
-      const postEventData = await getPostData();
-      await addApplicationData(
-        user,
-        userName,
-        existingApplicationDocData,
-        overwrite,
-        postEventData
-      );
-
-      return new NextResponse("Form data received", {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      try {
+        await addData(
+          id,
+          user,
+          userName,
+          existingApplicationDocData,
+          overwrite
+        );
+        return new NextResponse("Form data received", {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error: any) {
+        console.error(error.message || error);
+        return new NextResponse(
+          JSON.stringify({
+            error: "ポスト処理が異常終了しました。",
+          }),
+          {
+            status: 500,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
     }
   } catch (err: any) {
     console.error(`Webhook Error: ${err.message}`);
