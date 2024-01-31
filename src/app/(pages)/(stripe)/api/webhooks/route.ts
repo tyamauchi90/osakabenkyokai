@@ -60,6 +60,11 @@ export async function POST(req: NextRequest) {
               } else {
                 throw new Error("existingApplicationDocData is undefined");
               }
+
+              return new NextResponse(
+                JSON.stringify({ message: "Form data received" }),
+                { status: 200, headers: { "Content-Type": "application/json" } }
+              );
             } catch (error: any) {
               console.error(error.message || error);
               throw error;
