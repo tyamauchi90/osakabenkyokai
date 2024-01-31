@@ -8,6 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function POST(req: NextRequest) {
   const sig = req.headers?.get("stripe-signature");
   const rawBody = await req.text();
+  console.log(sig, rawBody);
 
   let event;
 
@@ -26,9 +27,17 @@ export async function POST(req: NextRequest) {
       const postId = event.data.object.metadata?.postId;
       const userId = event.data.object.metadata?.userId;
       const userName = event.data.object.metadata?.userName;
-      const existingApplicationDocData =
-        event.data.object.metadata?.existingApplicationDocData;
-      const overwrite = event.data.object.metadata?.overwrite;
+      // const existingApplicationDocData =
+      //   event.data.object.metadata?.existingApplicationDocData;
+      // const overwrite = event.data.object.metadata?.overwrite;
+
+      console.log(
+        postId,
+        userId,
+        userName
+        // existingApplicationDocData,
+        // overwrite
+      );
 
       const postRef = firebaseAdmin.firestore().doc(`posts/${postId}`);
       const postSnapshot = await postRef.get();
@@ -47,32 +56,25 @@ export async function POST(req: NextRequest) {
 
       try {
         const applicationRef = applicationsRef.doc(userId);
-        if (existingApplicationDocData && overwrite) {
-          await applicationRef.set(applicationData);
-        } else if (!existingApplicationDocData) {
-          await applicationRef.set(applicationData);
-        } else {
-          throw new Error("existingApplicationDocData is undefined");
-        }
+        // if (existingApplicationDocData && overwrite) {
+        await applicationRef.set(applicationData);
+        // } else if (!existingApplicationDocData) {
+        //   await applicationRef.set(applicationData);
+        // } else {
+        //   throw new Error("existingApplicationDocData is undefined");
+        // }
       } catch (error: any) {
         console.error(error.message || error);
         throw error;
       }
     }
 
-    return new NextResponse("Form data received", {
+    return new NextResponse("応募データを追加しました", {
       status: 200,
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "text/plain",
       },
     });
-    //   return new NextResponse("応募データを追加しました", {
-    //     status: 200,
-    //     headers: {
-    //       "Content-Type": "text/plain",
-    //     },
-    //   });
-    // }
   } catch (err: any) {
     console.error(`Webhook Error: ${err.message}`);
     return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });

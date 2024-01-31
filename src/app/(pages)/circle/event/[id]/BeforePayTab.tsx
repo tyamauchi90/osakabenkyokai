@@ -140,8 +140,8 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                   postId: id,
                   userId,
                   userName: formData.name,
-                  existingApplicationDocData,
-                  overwrite,
+                  // existingApplicationDocData,
+                  // overwrite,
                 }),
               });
 
@@ -158,19 +158,11 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           };
           await fetchCheckoutSession();
 
-          // const res = await fetch(`/api/webhooks/client`, {
           const res = await fetch("/api/webhooks", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              postId: id,
-              userId,
-              userName: formData.name,
-              existingApplicationDocData,
-              overwrite,
-            }),
           });
 
           if (!res.ok) {
