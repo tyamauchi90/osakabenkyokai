@@ -66,29 +66,6 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
     });
-    // Firestoreに応募データを追加
-    //   const postRef = firebaseAdmin.firestore().doc(`posts/${postId}`);
-    //   const postSnapshot = await postRef.get();
-    //   const postEventData = postSnapshot.data();
-
-    //   const applicationData = {
-    //     postId,
-    //     eventDate: postEventData?.eventDate || null,
-    //     userId,
-    //     userName,
-    //     applyDate: Timestamp.now(),
-    //     isPaid: true,
-    //   };
-
-    //   const applicationsRef = postRef.collection("applications");
-
-    //   try {
-    //     await applicationsRef.doc(userId).set(applicationData);
-    //   } catch (error: any) {
-    //     console.error(error.message || error);
-    //     throw error;
-    //   }
-
     //   return new NextResponse("応募データを追加しました", {
     //     status: 200,
     //     headers: {
