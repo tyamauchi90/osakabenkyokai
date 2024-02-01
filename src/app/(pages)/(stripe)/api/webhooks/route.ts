@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         postId,
         eventDate: postEventData?.eventDate || null,
         userId,
-        userName,
+        userName: userName || "",
         applyDate: Timestamp.now(),
         isPaid: true,
       };
