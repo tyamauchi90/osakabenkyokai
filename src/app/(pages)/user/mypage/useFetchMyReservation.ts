@@ -1,3 +1,4 @@
+import { TimestampType } from "@/app/type/TimestampType";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Timestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
@@ -45,16 +46,25 @@ export const useFetchMyReservation = () => {
 
           const res = await response.json();
 
-          const applicationsData: DocType[] = res.applicationsArray.map(
-            (applicationData: DocType) => ({
+          const applicationsData: DocType[] = res.applicationsArray
+            .map((applicationData: DocType) => ({
               postId: applicationData.postId,
               eventDate: applicationData.eventDate,
               userId: applicationData.userId,
               userName: applicationData.userName,
               applyDate: applicationData.applyDate,
               isPaid: applicationData.isPaid,
-            })
-          );
+            }))
+            .sort((a: DocType, b: DocType) => {
+              const dateA = new Date(
+                (a.eventDate as unknown as TimestampType)._seconds * 1000
+              );
+              const dateB = new Date(
+                (b.eventDate as unknown as TimestampType)._seconds * 1000
+              );
+
+              return dateB.getTime() - dateA.getTime();
+            });
 
           if (isMounted) {
             setApplications(applicationsData);
