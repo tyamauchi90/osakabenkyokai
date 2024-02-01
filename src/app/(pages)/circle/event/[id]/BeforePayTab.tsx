@@ -148,21 +148,26 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
             );
             throw new Error("サーバーからの応答が正常ではありません。");
-          }
+          } else {
+            const clientRes = await fetch("/api/webhooks/client", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                postId: id,
+                userId,
+                userName: formData.name,
+              }),
+            });
 
-          const clientRes = await fetch("/api/webhooks/client", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!clientRes.ok) {
-            const errorText = await res.text(); // エラーの詳細を取得
-            console.error(
-              `クライアントサーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-            );
-            throw new Error("サーバーからの応答が正常ではありません。");
+            if (!clientRes.ok) {
+              const errorText = await clientRes.text(); // エラーの詳細を取得
+              console.error(
+                `クライアントサーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+              );
+              throw new Error("サーバーからの応答が正常ではありません。");
+            }
           }
 
           setLoading(false);
