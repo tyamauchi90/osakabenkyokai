@@ -73,7 +73,7 @@
     "react-scroll": "^1.9.0",
     "resend": "^2.0.0",
     "splide-nextjs": "^2.4.23",
-    "stripe": "^14.7.0",
+    "stripe": "^14.14.0",
     "swr": "^2.2.4",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
