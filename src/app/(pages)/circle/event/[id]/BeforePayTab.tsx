@@ -63,7 +63,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             userId,
           }),
         });
-        console.log(id, userId);
 
         if (!res.ok) {
           console.error("API Error:", res.statusText);
