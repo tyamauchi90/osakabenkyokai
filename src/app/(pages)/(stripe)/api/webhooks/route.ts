@@ -3,12 +3,13 @@ import { Timestamp } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY! as string, {
+  apiVersion: "2023-10-16",
+});
 
 export async function POST(req: NextRequest) {
   const sig = req.headers?.get("stripe-signature");
-  const rawBody = await req.text();
-  console.log(sig, rawBody);
+  // const rawBody = await req.text();
 
   let event;
 
@@ -16,30 +17,27 @@ export async function POST(req: NextRequest) {
     if (!sig) {
       throw new Error("No signature provided");
     }
+    const body = await req.arrayBuffer();
     event = stripe.webhooks.constructEvent(
-      rawBody,
+      // rawBody,
+      Buffer.from(body),
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET! as string
     );
 
     if (event.type === "payment_intent.succeeded") {
       // const sessionId = event.data.object.id;
-      const postId = event.data.object.metadata?.postId;
-      const userId = event.data.object.metadata?.userId;
-      const userName = event.data.object.metadata?.userName;
+      const postId = event.data.object.metadata!.postId;
+      const userId = event.data.object.metadata!.userId;
+      const userName = event.data.object.metadata!.userName;
       // const existingApplicationDocData =
       //   event.data.object.metadata?.existingApplicationDocData;
       // const overwrite = event.data.object.metadata?.overwrite;
 
-      console.log(
-        postId,
-        userId,
-        userName
-        // existingApplicationDocData,
-        // overwrite
-      );
-
-      const postRef = firebaseAdmin.firestore().doc(`posts/${postId}`);
+      // const postRef = firebaseAdmin.firestore().doc(`posts/${postId}`);
+      const postRef = firebaseAdmin
+        .firestore()
+        .doc(`posts/v88gMRVNztBu0EWPQu14`);
       const postSnapshot = await postRef.get();
       const postEventData = postSnapshot.data();
 

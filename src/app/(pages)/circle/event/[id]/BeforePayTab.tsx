@@ -110,7 +110,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
 
           // overwriteの条件分岐
           const _result = await _res.json();
-          const existingApplicationDocData = _result.existingApplicationDocData;
+          // const existingApplicationDocData = _result.existingApplicationDocData;
           let overwrite = false;
           if (_result.exists) {
             overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
@@ -127,6 +127,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             const { error } = await stripe.redirectToCheckout({
               sessionId,
             });
+            console.error(error);
           }
 
           const fetchCheckoutSession = async () => {
@@ -158,6 +159,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           };
           await fetchCheckoutSession();
 
+          // webhooks
           const res = await fetch("/api/webhooks", {
             method: "POST",
             headers: {
