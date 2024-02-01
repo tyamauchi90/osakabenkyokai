@@ -63,6 +63,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             userId,
           }),
         });
+        console.log(id, userId);
 
         if (!res.ok) {
           console.error("API Error:", res.statusText);
@@ -101,7 +102,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             body: JSON.stringify({
               id,
               userId,
-              userName: formData.name,
             }),
           });
 
@@ -153,11 +153,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
 
           setLoading(false);
           form.reset();
-          router.push("/user/mypage/");
-          toast({
-            title: "参加申込みを完了しました",
-            description: "申込み内容に間違いがないか再度ご確認ください。",
-          });
+          // toast はsuccessPageに移動
         } catch (error: any) {
           setLoading(false);
           form.reset();
