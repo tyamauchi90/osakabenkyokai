@@ -3,19 +3,12 @@ import { Timestamp } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function POST(req: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY! as string, {
     apiVersion: "2023-10-16",
   });
   const sig = req.headers.get("stripe-signature");
-  const rawBody = await req.text();
-  // const body = await req.arrayBuffer();
+  const body = await req.arrayBuffer();
 
   let event: Stripe.Event;
 
@@ -24,8 +17,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No signature provided");
     }
     event = stripe.webhooks.constructEvent(
-      rawBody,
-      // Buffer.from(body).toString("utf8"),
+      Buffer.from(body).toString("utf8"),
       sig,
       process.env.STRIPE_WEBHOOK_SECRET! as string
     );
