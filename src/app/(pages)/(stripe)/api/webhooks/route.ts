@@ -1,14 +1,16 @@
 import { firebaseAdmin } from "@/firebase/admin";
 import { Timestamp } from "firebase/firestore";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY! as string, {
     apiVersion: "2023-10-16",
   });
-  const sig = req.headers.get("stripe-signature");
-  const body = await req.arrayBuffer();
+  // const sig = req.headers.get("stripe-signature");
+  // const body = await req.arrayBuffer();
+  const body = await req.text();
+  const sig = req.headers.get("Stripe-Signature") as string;
 
   let event: Stripe.Event;
 
@@ -17,15 +19,15 @@ export async function POST(req: NextRequest) {
       throw new Error("No signature provided");
     }
     event = stripe.webhooks.constructEvent(
-      Buffer.from(body).toString("utf8"),
+      // Buffer.from(body).toString("utf8"),
+      body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET! as string
     );
 
     if (event.type === "payment_intent.succeeded") {
-      const postId = event.data.object.metadata!.postId as String;
-      const userId = event.data.object.metadata!.userId as String;
-      const userName = event.data.object.metadata.name as String;
+      const { postId, userId } = event.data.object.metadata;
+      const userName = event.data.object.metadata.name;
       // const userName = event.data.object.metadata!.userName;
       // const existingApplicationDocData =
       //   event.data.object.metadata?.existingApplicationDocData;
@@ -39,7 +41,7 @@ export async function POST(req: NextRequest) {
         postId,
         eventDate: postEventData?.eventDate || null,
         userId,
-        userName,
+        userName: userName || "",
         applyDate: Timestamp.now(),
         isPaid: true,
       };
