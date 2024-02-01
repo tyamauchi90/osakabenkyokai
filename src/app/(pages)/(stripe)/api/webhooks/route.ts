@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const body = await req.arrayBuffer();
     event = stripe.webhooks.constructEvent(
       // rawBody,
-      Buffer.from(body),
+      Buffer.from(body).toString("utf8"),
       sig,
       process.env.STRIPE_WEBHOOK_SECRET! as string
     );
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         postId,
         eventDate: postEventData?.eventDate || null,
         userId,
-        userName: userName,
+        userName,
         applyDate: Timestamp.now(),
         isPaid: true,
       };
