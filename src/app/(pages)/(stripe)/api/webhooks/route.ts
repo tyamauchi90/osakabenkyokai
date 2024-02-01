@@ -3,13 +3,19 @@ import { Timestamp } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY! as string, {
   apiVersion: "2023-10-16",
 });
 
 export async function POST(req: NextRequest) {
   const sig = req.headers?.get("stripe-signature");
-  // const rawBody = await req.text();
+  const rawBody = await req.text();
 
   let event;
 
@@ -17,10 +23,10 @@ export async function POST(req: NextRequest) {
     if (!sig) {
       throw new Error("No signature provided");
     }
-    const body = await req.arrayBuffer();
+    // const body = await req.arrayBuffer();
     event = stripe.webhooks.constructEvent(
-      // rawBody,
-      Buffer.from(body).toString("utf8"),
+      rawBody,
+      // Buffer.from(body).toString("utf8"),
       sig,
       process.env.STRIPE_WEBHOOK_SECRET! as string
     );
@@ -52,7 +58,7 @@ export async function POST(req: NextRequest) {
       // try {
       const applicationRef = applicationsRef.doc(userId);
       // if (existingApplicationDocData && overwrite) {
-      await applicationRef.set(applicationData);
+      await applicationRef.set(applicationData, { merge: true });
       // } else if (!existingApplicationDocData) {
       //   await applicationRef.set(applicationData);
       // } else {

@@ -1,10 +1,4 @@
-import {
-  Timestamp,
-  collection,
-  doc,
-  getDoc,
-  setDoc
-} from "firebase/firestore";
+import { Timestamp, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../../../firebase/client";
 
@@ -65,7 +59,9 @@ export async function POST(req: NextRequest) {
         if (existingApplicationDocData && overwrite) {
           // データが存在し、上書きが許可されている場合、上書き
           const existingApplicationRef = doc(applicationRef, userId);
-          await setDoc(existingApplicationRef, applicationData);
+          await setDoc(existingApplicationRef, applicationData, {
+            merge: true,
+          });
         } else if (!existingApplicationDocData) {
           // データが存在しない場合、新規登録
           const newApplicationRef = doc(applicationRef, userId);
