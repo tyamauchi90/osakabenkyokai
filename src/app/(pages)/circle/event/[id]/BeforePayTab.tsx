@@ -150,6 +150,21 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             throw new Error("サーバーからの応答が正常ではありません。");
           }
 
+          const clientRes = await fetch("/api/webhooks/client", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!clientRes.ok) {
+            const errorText = await res.text(); // エラーの詳細を取得
+            console.error(
+              `クライアントサーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+            );
+            throw new Error("サーバーからの応答が正常ではありません。");
+          }
+
           setLoading(false);
           form.reset();
           // toast はsuccessPageに移動

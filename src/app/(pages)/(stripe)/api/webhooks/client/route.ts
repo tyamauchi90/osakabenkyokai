@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
   const request = await req.json();
   const { postId, user, userName, existingApplicationDocData, overwrite } =
     request;
-  console.log(request);
 
   try {
     const addData = async function (
