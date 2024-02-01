@@ -72,7 +72,6 @@ const AfterPayTab: FC<IdType> = ({ id }) => {
             body: JSON.stringify({
               id,
               userId,
-              userName: formData.name,
             }),
           });
 

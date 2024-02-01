@@ -75,9 +75,10 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         console.error("Fetch Error:", error.message);
       }
     };
-
-    fetchCheckoutSession();
-  }, []);
+    if (userId) {
+      fetchCheckoutSession();
+    }
+  }, [userId]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -133,35 +134,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             });
             console.error(error);
           }
-
-          // const fetchCheckoutSession = async () => {
-          //   try {
-          //     const res = await fetch("/api/checkoutsessions", {
-          //       method: "POST",
-          //       headers: {
-          //         "Content-Type": "application/json",
-          //       },
-          //       body: JSON.stringify({
-          //         postId: id,
-          //         userId,
-          //         userName: formData.name,
-          //         // existingApplicationDocData,
-          //         // overwrite,
-          //       }),
-          //     });
-
-          //     if (!res.ok) {
-          //       console.error("API Error:", res.statusText);
-          //       return;
-          //     }
-
-          //     const data = await res.json(); // JSONデータに変換
-          //     setSessionId(data.sessionId);
-          //   } catch (error: any) {
-          //     console.error("Fetch Error:", error.message);
-          //   }
-          // };
-          // await fetchCheckoutSession();
 
           // webhooks
           const res = await fetch("/api/webhooks", {

@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
     );
 
     if (event.type === "payment_intent.succeeded") {
-      const postId = event.data.object.metadata!.postId;
-      const userId = event.data.object.metadata!.userId;
-      const userName = event.data.object.metadata.name;
+      const postId = event.data.object.metadata!.postId as String;
+      const userId = event.data.object.metadata!.userId as String;
+      const userName = event.data.object.metadata.name as String;
       // const userName = event.data.object.metadata!.userName;
       // const existingApplicationDocData =
       //   event.data.object.metadata?.existingApplicationDocData;

@@ -12,7 +12,7 @@ import { db } from "../../../../../../../firebase/client";
 export async function POST(req: NextRequest) {
   try {
     const request = await req.json();
-    const { id, userId, userName } = request;
+    const { id, userId } = request;
 
     if (!id) {
       console.error("IDが未定義です。");
@@ -30,11 +30,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const findData = async function (
-      id: string,
-      userId: string,
-      userName: string
-    ) {
+    const findData = async function (id: string, userId: string) {
       const postRef = doc(db, "posts", id);
       const postSnapshot = await getDoc(postRef);
       const postEventData = postSnapshot.data();
@@ -42,7 +38,6 @@ export async function POST(req: NextRequest) {
       const applicationData = {
         eventDate: postEventData?.eventDate || null,
         userId,
-        userName: userName,
         applyDate: Timestamp.now(),
         isPaid: false || true,
       };
@@ -62,7 +57,7 @@ export async function POST(req: NextRequest) {
       );
     };
 
-    return await findData(id, userId, userName);
+    return await findData(id, userId);
   } catch (error: any) {
     console.error(error.message || error);
     return new NextResponse(
