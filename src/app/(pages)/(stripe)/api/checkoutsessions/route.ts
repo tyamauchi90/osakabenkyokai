@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       metadata: {
         postId,
         userId,
-        userName,
+        // userName,
         // existingApplicationDocData,
         // overwrite,
       },
