@@ -21,10 +21,12 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
-      metadata: {
-        postId,
-        userId,
-        userName,
+      payment_intent_data: {
+        metadata: {
+          postId,
+          userId,
+          userName,
+        },
       },
     });
   } catch (error: any) {
