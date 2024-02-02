@@ -70,7 +70,7 @@ export const stripePaymentSucceeded = functions.https.onRequest(
 
         const applicationsRef = postRef.collection("applications");
         const applicationRef = applicationsRef.doc(userId);
-        await applicationRef.set(applicationData, { merge: true });
+        await applicationRef.set(applicationData, {merge: true});
       }
 
       res.sendStatus(200);

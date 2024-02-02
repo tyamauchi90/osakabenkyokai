@@ -20,7 +20,7 @@ import { useToast } from "@/app/components/shadcn/ui/use-toast";
 import getStripe from "@/app/stripe/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../../components/shadcn/ui/button";
@@ -45,6 +45,11 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
   const router = useRouter();
   const { toast } = useToast();
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const nameRef = useRef("");
+
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    nameRef.current = event.target.value;
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -102,7 +107,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             }
           }
 
-          if (userId && formData.name) {
+          if (userId && nameRef.current) {
             const fetchCheckoutSession = async (userName: string) => {
               try {
                 const res = await fetch("/api/checkoutsessions", {
@@ -125,7 +130,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                 console.error("Fetch Error:", error.message);
               }
             };
-            await fetchCheckoutSession(formData.name);
+            await fetchCheckoutSession(nameRef.current);
           }
 
           const stripe = await getStripe();
@@ -201,7 +206,8 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                         <Input
                           type="text"
                           placeholder="名前を入力してください"
-                          {...field}
+                          onChange={handleNameChange}
+                          // {...field}
                         />
                       </FormControl>
                       <FormMessage />
