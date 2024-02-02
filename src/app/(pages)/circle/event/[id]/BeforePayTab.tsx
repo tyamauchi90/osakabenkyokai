@@ -42,6 +42,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
   const [loading, setLoading] = useState(false);
   const user = useAuthCurrentUser();
   const userId = user?.uid;
+  const userName = user?.displayName;
   const router = useRouter();
   const { toast } = useToast();
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -61,6 +62,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           body: JSON.stringify({
             postId: id,
             userId,
+            userName,
           }),
         });
 
@@ -75,10 +77,10 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         console.error("Fetch Error:", error.message);
       }
     };
-    if (userId) {
+    if (userId && userName) {
       fetchCheckoutSession();
     }
-  }, [userId]);
+  }, [userId, userName]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -135,21 +137,9 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           }
 
           // webhooks
-          const res = await fetch("/api/webhooks", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!res.ok) {
-            const errorText = await res.text(); // エラーの詳細を取得
-            console.error(
-              `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-            );
-            throw new Error("サーバーからの応答が正常ではありません。");
-          } else {
-            const clientRes = await fetch("/api/webhooks/client", {
+          const res = await fetch(
+            "https://us-central1-osakabenkyokai.cloudfunctions.net/stripePaymentSucceeded",
+            {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -159,15 +149,15 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                 userId,
                 userName: formData.name,
               }),
-            });
-
-            if (!clientRes.ok) {
-              const errorText = await clientRes.text(); // エラーの詳細を取得
-              console.error(
-                `クライアントサーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-              );
-              throw new Error("サーバーからの応答が正常ではありません。");
             }
+          );
+
+          if (!res.ok) {
+            const errorText = await res.text(); // エラーの詳細を取得
+            console.error(
+              `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+            );
+            throw new Error("サーバーからの応答が正常ではありません。");
           }
 
           setLoading(false);

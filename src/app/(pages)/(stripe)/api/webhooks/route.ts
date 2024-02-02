@@ -1,4 +1,3 @@
-import { firebaseAdmin } from "@/firebase/admin";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -25,19 +24,6 @@ export async function POST(req: Request) {
     );
 
     if (event.type === "payment_intent.succeeded") {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
-      // Firestoreにデータを書き込む
-      await firebaseAdmin
-        .firestore()
-        .collection("payments")
-        .doc(paymentIntent.id)
-        .set({
-          id: paymentIntent.id,
-          amount: paymentIntent.amount,
-          created: paymentIntent.created,
-        });
-
       // const { postId, userId } = event.data.object.metadata;
       // const userName = event.data.object.metadata.name;
       // // const userName = event.data.object.metadata!.userName;
