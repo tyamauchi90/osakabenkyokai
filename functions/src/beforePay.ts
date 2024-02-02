@@ -1,4 +1,4 @@
-import * as cors from 'cors';
+import * as cors from "cors";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import Stripe from "stripe";
