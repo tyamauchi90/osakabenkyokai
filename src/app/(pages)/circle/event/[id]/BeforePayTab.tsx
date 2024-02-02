@@ -42,7 +42,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
   const [loading, setLoading] = useState(false);
   const user = useAuthCurrentUser();
   const userId = user?.uid;
-  const userName = user?.displayName;
   const router = useRouter();
   const { toast } = useToast();
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -55,28 +54,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
   });
 
   // useEffect(() => {
-  const fetchCheckoutSession = async (userName: string) => {
-    try {
-      const res = await fetch("/api/checkoutsessions", {
-        method: "POST",
-        body: JSON.stringify({
-          postId: id,
-          userId,
-          userName,
-        }),
-      });
-
-      if (!res.ok) {
-        console.error("API Error:", res.statusText);
-        return;
-      }
-
-      const data = await res.json(); // JSONデータに変換
-      setSessionId(data.sessionId);
-    } catch (error: any) {
-      console.error("Fetch Error:", error.message);
-    }
-  };
   // }, [userId, userName]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
@@ -125,7 +102,29 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             }
           }
 
-          if (userId && userName) {
+          if (userId && formData.name) {
+            const fetchCheckoutSession = async (userName: string) => {
+              try {
+                const res = await fetch("/api/checkoutsessions", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    postId: id,
+                    userId,
+                    userName,
+                  }),
+                });
+
+                if (!res.ok) {
+                  console.error("API Error:", res.statusText);
+                  return;
+                }
+
+                const data = await res.json(); // JSONデータに変換
+                setSessionId(data.sessionId);
+              } catch (error: any) {
+                console.error("Fetch Error:", error.message);
+              }
+            };
             await fetchCheckoutSession(formData.name);
           }
 
@@ -145,11 +144,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               headers: {
                 "Content-Type": "application/json",
               },
-              // body: JSON.stringify({
-              //   postId: id,
-              //   userId,
-              //   userName: formData.name,
-              // }),
             }
           );
 
