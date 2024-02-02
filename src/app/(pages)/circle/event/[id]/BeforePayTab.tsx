@@ -20,7 +20,7 @@ import { useToast } from "@/app/components/shadcn/ui/use-toast";
 import getStripe from "@/app/stripe/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../../components/shadcn/ui/button";
@@ -54,33 +54,30 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
     },
   });
 
-  useEffect(() => {
-    const fetchCheckoutSession = async () => {
-      try {
-        const res = await fetch("/api/checkoutsessions", {
-          method: "POST",
-          body: JSON.stringify({
-            postId: id,
-            userId,
-            userName,
-          }),
-        });
+  // useEffect(() => {
+  const fetchCheckoutSession = async (userName: string) => {
+    try {
+      const res = await fetch("/api/checkoutsessions", {
+        method: "POST",
+        body: JSON.stringify({
+          postId: id,
+          userId,
+          userName,
+        }),
+      });
 
-        if (!res.ok) {
-          console.error("API Error:", res.statusText);
-          return;
-        }
-
-        const data = await res.json(); // JSONデータに変換
-        setSessionId(data.sessionId);
-      } catch (error: any) {
-        console.error("Fetch Error:", error.message);
+      if (!res.ok) {
+        console.error("API Error:", res.statusText);
+        return;
       }
-    };
-    if (userId && userName) {
-      fetchCheckoutSession();
+
+      const data = await res.json(); // JSONデータに変換
+      setSessionId(data.sessionId);
+    } catch (error: any) {
+      console.error("Fetch Error:", error.message);
     }
-  }, [userId, userName]);
+  };
+  // }, [userId, userName]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -126,6 +123,10 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               router.push(`/circle/event/${id}/`);
               return;
             }
+          }
+
+          if (userId && userName) {
+            await fetchCheckoutSession(formData.name);
           }
 
           const stripe = await getStripe();
