@@ -1,11 +1,11 @@
-// import cors from "cors";
+import cors from "cors";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import Stripe from "stripe";
 
 admin.initializeApp();
 
-// const corsHandler = cors({origin: true});
+const corsHandler = cors({origin: true});
 
 type StripeEvent = {
   type: string;
@@ -30,7 +30,7 @@ const stripe = new Stripe(functions.config().stripe.secret_key, {
 
 export const stripePaymentSucceeded = functions.https.onRequest(
   async (req: functions.https.Request, res: functions.Response) => {
-    // corsHandler(req, res, async () => {
+    corsHandler(req, res, async () => {
     try {
       const sig = req.headers["stripe-signature"];
       if (!sig) {
@@ -80,6 +80,6 @@ export const stripePaymentSucceeded = functions.https.onRequest(
       }
       res.sendStatus(500);
     }
-    // });
+    });
   }
 );
