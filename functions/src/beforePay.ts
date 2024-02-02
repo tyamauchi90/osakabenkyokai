@@ -1,11 +1,11 @@
-import * as cors from "cors";
+import * as cors from 'cors';
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import Stripe from "stripe";
 
 admin.initializeApp();
 
-const corsHandler = cors({ origin: true });
+const corsHandler = cors({origin: true});
 
 type StripeEvent = {
   type: string;
@@ -70,7 +70,7 @@ export const stripePaymentSucceeded = functions.https.onRequest(
 
           const applicationsRef = postRef.collection("applications");
           const applicationRef = applicationsRef.doc(userId);
-          await applicationRef.set(applicationData, { merge: true });
+          await applicationRef.set(applicationData, {merge: true});
         }
 
         res.sendStatus(200);
