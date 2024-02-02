@@ -144,11 +144,11 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({
-                postId: id,
-                userId,
-                userName: formData.name,
-              }),
+              // body: JSON.stringify({
+              //   postId: id,
+              //   userId,
+              //   userName: formData.name,
+              // }),
             }
           );
 
