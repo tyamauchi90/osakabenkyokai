@@ -20,7 +20,7 @@ import { useToast } from "@/app/components/shadcn/ui/use-toast";
 import getStripe from "@/app/stripe/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC, useRef, useState } from "react";
+import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../../components/shadcn/ui/button";
@@ -45,11 +45,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
   const router = useRouter();
   const { toast } = useToast();
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const nameRef = useRef("");
-
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    nameRef.current = event.target.value;
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -107,7 +102,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             }
           }
 
-          if (userId && nameRef.current) {
+          if (userId && formData.name) {
             const fetchCheckoutSession = async (userName: string) => {
               try {
                 const res = await fetch("/api/checkoutsessions", {
@@ -130,39 +125,39 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                 console.error("Fetch Error:", error.message);
               }
             };
-            await fetchCheckoutSession(nameRef.current);
-          }
+            await fetchCheckoutSession(formData.name);
 
-          const stripe = await getStripe();
-          if (stripe !== null && sessionId !== null) {
-            const { error } = await stripe.redirectToCheckout({
-              sessionId,
-            });
-            console.error(error);
-          }
-
-          // webhooks
-          const res = await fetch(
-            "https://us-central1-osakabenkyokai.cloudfunctions.net/stripePaymentSucceeded",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+            const stripe = await getStripe();
+            if (stripe !== null && sessionId !== null) {
+              const { error } = await stripe.redirectToCheckout({
+                sessionId,
+              });
+              console.error(error);
             }
-          );
 
-          if (!res.ok) {
-            const errorText = await res.text(); // エラーの詳細を取得
-            console.error(
-              `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+            // webhooks
+            const res = await fetch(
+              "https://us-central1-osakabenkyokai.cloudfunctions.net/stripePaymentSucceeded",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
             );
-            throw new Error("サーバーからの応答が正常ではありません。");
-          }
 
-          setLoading(false);
-          form.reset();
-          // toast はsuccessPageに移動
+            if (!res.ok) {
+              const errorText = await res.text(); // エラーの詳細を取得
+              console.error(
+                `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+              );
+              throw new Error("サーバーからの応答が正常ではありません。");
+            }
+
+            setLoading(false);
+            form.reset();
+            // toast はsuccessPageに移動
+          }
         } catch (error: any) {
           setLoading(false);
           form.reset();
@@ -206,8 +201,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
                         <Input
                           type="text"
                           placeholder="名前を入力してください"
-                          onChange={handleNameChange}
-                          // {...field}
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -220,7 +214,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               {/* stripe決済 */}
               <Button
                 role="link"
-                // onClick={handleBeforePay}
                 className={`w-28 ${
                   (loading && "opacity-50 cursor-not-allowed") || ""
                 }`}
