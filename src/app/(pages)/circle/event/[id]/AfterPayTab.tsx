@@ -97,7 +97,7 @@ const AfterPayTab: FC<IdType> = ({ id }) => {
             }
           }
 
-          const res = await fetch(`/circle/event/api/${id}/beforePay`, {
+          const res = await fetch(`/circle/event/api/${id}/afterPay`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

@@ -136,22 +136,22 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             }
 
             // webhooks
-            const res = await fetch(
-              "https://us-central1-osakabenkyokai.cloudfunctions.net/stripePaymentSucceeded",
-              {
+            const webhookUrl = process.env.WEBHOOK_URL;
+            if (typeof webhookUrl === "string") {
+              const res = await fetch(webhookUrl, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                 },
-              }
-            );
+              });
 
-            if (!res.ok) {
-              const errorText = await res.text(); // エラーの詳細を取得
-              console.error(
-                `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-              );
-              throw new Error("サーバーからの応答が正常ではありません。");
+              if (!res.ok) {
+                const errorText = await res.text(); // エラーの詳細を取得
+                console.error(
+                  `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+                );
+                throw new Error("サーバーからの応答が正常ではありません。");
+              }
             }
 
             setLoading(false);
