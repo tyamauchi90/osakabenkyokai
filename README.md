@@ -1,6 +1,6 @@
-# おおさか勉強会サイト
+# おおさか勉強会サイト（https://osakabenkyokai.vercel.app/）
 
-「学びたい、交流したい」という思いをもった社会人が集まる**おおさか勉強会**（以降、「当サークル」）の Web サイトです。
+「学びたい、交流したい」という思いをもった社会人が集まる**[おおさか勉強会](https://osakabenkyokai.vercel.app/)**（以降、「当サークル」）の Web サイトです。
 
 ## コンセプト
 
@@ -50,15 +50,15 @@
 - ホスティング：Vercel
 - スタイリング：Tailwind CSS
 
-## ソースコード
-
-ソースコードは GitHub で公開しています。
-
-- GitHub リポジトリ：https://github.com/tyamauchi90/osakabenkyokai
-
 ## 保守・運用
 
 当サイトは CI/CD パイプラインにより保守・運用されており、GitHub にプッシュされたコードは自動的にビルド・テストされ、エラーがなければ本番環境にデプロイされます。
+
+<!-- ## ソースコード
+
+ソースコードは GitHub で公開しています。
+
+- GitHub リポジトリ：https://github.com/tyamauchi90/osakabenkyokai -->
 
 <!--
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
