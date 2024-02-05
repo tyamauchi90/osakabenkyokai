@@ -14,6 +14,7 @@ type StripeEvent = {
       metadata?: {
         postId: string;
         userId: string;
+        userName: string;
       };
     };
   };
@@ -48,7 +49,7 @@ export const stripePaymentSucceeded = functions.https.onRequest(
           const paymentIntent = stripeEvent.data.object;
           const postId = paymentIntent.metadata?.postId;
           const userId = paymentIntent.metadata?.userId;
-          const userName = req.body.userName;
+          const userName = paymentIntent.metadata?.userName;
 
           if (!postId || !userId || !userName) {
             throw new Error("Required data is missing");

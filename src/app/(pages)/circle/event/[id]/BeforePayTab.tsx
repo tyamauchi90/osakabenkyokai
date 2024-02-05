@@ -20,7 +20,7 @@ import { useToast } from "@/app/components/shadcn/ui/use-toast";
 import getStripe from "@/app/stripe/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../../components/shadcn/ui/button";
@@ -53,32 +53,8 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
     },
   });
 
-  useEffect(() => {
-    const fetchCheckoutSession = async () => {
-      try {
-        const res = await fetch("/api/checkoutsessions", {
-          method: "POST",
-          body: JSON.stringify({
-            postId: id,
-            userId,
-          }),
-        });
-
-        if (!res.ok) {
-          console.error("API Error:", res.statusText);
-          return;
-        }
-
-        const data = await res.json(); // JSONデータに変換
-        setSessionId(data.sessionId);
-      } catch (error: any) {
-        console.error("Fetch Error:", error.message);
-      }
-    };
-    if (id && userId) {
-      fetchCheckoutSession();
-    }
-  }, [id, userId]);
+  // useEffect(() => {
+  // }, [id, userId]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -92,75 +68,101 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         setLoading(true);
 
         try {
-          // 予約データが存在するかチェック
-          const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id,
-              userId,
-            }),
-          });
-
-          if (!_res.ok) {
-            const errorText = await _res.text(); // エラーの詳細を取得
-            console.error(
-              `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-            );
-            throw new Error("サーバーからの応答が正常ではありません。");
-          }
-
-          if (formData.name) {
-            // overwriteの条件分岐
-            const _result = await _res.json();
-            // const existingApplicationDocData = _result.existingApplicationDocData;
-            let overwrite = false;
-            if (_result.exists) {
-              overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
-              if (!overwrite) {
-                form.reset();
-                setLoading(false);
-                router.push(`/circle/event/${id}/`);
-                return;
-              }
-            }
-
-            const stripe = await getStripe();
-            if (stripe !== null && sessionId !== null) {
-              const { error } = await stripe.redirectToCheckout({
-                sessionId,
-              });
-              console.error(error);
-            }
-
-            // webhooks
-            const webhookUrl = process.env.WEBHOOK_URL;
-            if (typeof webhookUrl === "string") {
-              const res = await fetch(webhookUrl, {
+          const fetchCheckoutSession = async () => {
+            try {
+              const res = await fetch("/api/checkoutsessions", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
                 body: JSON.stringify({
+                  postId: id,
+                  userId,
                   userName: formData.name,
                 }),
               });
 
               if (!res.ok) {
-                const errorText = await res.text(); // エラーの詳細を取得
-                console.error(
-                  `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-                );
-                throw new Error("サーバーからの応答が正常ではありません。");
+                console.error("API Error:", res.statusText);
+                return;
+              }
+
+              const data = await res.json(); // JSONデータに変換
+              setSessionId(data.sessionId);
+            } catch (error: any) {
+              console.error("Fetch Error:", error.message);
+            }
+          };
+          if (id && userId && formData.name) {
+            fetchCheckoutSession();
+
+            // 予約データが存在するかチェック
+            const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                id,
+                userId,
+              }),
+            });
+
+            if (!_res.ok) {
+              const errorText = await _res.text(); // エラーの詳細を取得
+              console.error(
+                `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+              );
+              throw new Error("サーバーからの応答が正常ではありません。");
+            }
+
+            if (formData.name) {
+              // overwriteの条件分岐
+              const _result = await _res.json();
+              // const existingApplicationDocData = _result.existingApplicationDocData;
+              let overwrite = false;
+              if (_result.exists) {
+                overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
+                if (!overwrite) {
+                  form.reset();
+                  setLoading(false);
+                  router.push(`/circle/event/${id}/`);
+                  return;
+                }
+              }
+
+              const stripe = await getStripe();
+              if (stripe !== null && sessionId !== null) {
+                const { error } = await stripe.redirectToCheckout({
+                  sessionId,
+                });
+                console.error(error);
+              }
+
+              // webhooks
+              const webhookUrl = process.env.WEBHOOK_URL;
+              if (typeof webhookUrl === "string") {
+                const res = await fetch(webhookUrl, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    userName: formData.name,
+                  }),
+                });
+
+                if (!res.ok) {
+                  const errorText = await res.text(); // エラーの詳細を取得
+                  console.error(
+                    `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+                  );
+                  throw new Error("サーバーからの応答が正常ではありません。");
+                }
               }
             }
-          }
 
-          setLoading(false);
-          form.reset();
-          // toast はsuccessPageに移動
+            setLoading(false);
+            form.reset();
+            // toast はsuccessPageに移動
+          }
         } catch (error: any) {
           setLoading(false);
           form.reset();
