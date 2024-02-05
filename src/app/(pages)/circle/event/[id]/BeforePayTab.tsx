@@ -68,30 +68,30 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         setLoading(true);
 
         try {
-          const fetchCheckoutSession = async () => {
-            try {
-              const res = await fetch("/api/checkoutsessions", {
-                method: "POST",
-                body: JSON.stringify({
-                  postId: id,
-                  userId,
-                  userName: formData.name,
-                }),
-              });
-
-              if (!res.ok) {
-                console.error("API Error:", res.statusText);
-                return;
-              }
-
-              const data = await res.json(); // JSONデータに変換
-              setSessionId(data.sessionId);
-            } catch (error: any) {
-              console.error("Fetch Error:", error.message);
-            }
-          };
+          // const fetchCheckoutSession = async () => {
           if (id && userId && formData.name) {
-            await fetchCheckoutSession();
+            // try {
+            const res = await fetch("/api/checkoutsessions", {
+              method: "POST",
+              body: JSON.stringify({
+                postId: id,
+                userId,
+                userName: formData.name,
+              }),
+            });
+
+            if (!res.ok) {
+              console.error("API Error:", res.statusText);
+              return;
+            }
+
+            const data = await res.json(); // JSONデータに変換
+            setSessionId(data.sessionId);
+            // } catch (error: any) {
+            //   console.error("Fetch Error:", error.message);
+            // }
+            // };
+            // await fetchCheckoutSession();
 
             // 予約データが存在するかチェック
             const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
@@ -113,56 +113,54 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
               throw new Error("サーバーからの応答が正常ではありません。");
             }
 
-            if (formData.name) {
-              // overwriteの条件分岐
-              const _result = await _res.json();
-              // const existingApplicationDocData = _result.existingApplicationDocData;
-              let overwrite = false;
-              if (_result.exists) {
-                overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
-                if (!overwrite) {
-                  form.reset();
-                  setLoading(false);
-                  router.push(`/circle/event/${id}/`);
-                  return;
-                }
-              }
-
-              const stripe = await getStripe();
-              if (stripe !== null && sessionId !== null) {
-                const { error } = await stripe.redirectToCheckout({
-                  sessionId,
-                });
-                console.error(error);
-              }
-
-              // webhooks
-              const webhookUrl = process.env.WEBHOOK_URL;
-              if (typeof webhookUrl === "string") {
-                const res = await fetch(webhookUrl, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    userName: formData.name,
-                  }),
-                });
-
-                if (!res.ok) {
-                  const errorText = await res.text(); // エラーの詳細を取得
-                  console.error(
-                    `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-                  );
-                  throw new Error("サーバーからの応答が正常ではありません。");
-                }
+            // overwriteの条件分岐
+            const _result = await _res.json();
+            // const existingApplicationDocData = _result.existingApplicationDocData;
+            let overwrite = false;
+            if (_result.exists) {
+              overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
+              if (!overwrite) {
+                form.reset();
+                setLoading(false);
+                router.push(`/circle/event/${id}/`);
+                return;
               }
             }
 
-            setLoading(false);
-            form.reset();
-            // toast はsuccessPageに移動
+            const stripe = await getStripe();
+            if (stripe !== null && sessionId !== null) {
+              const { error } = await stripe.redirectToCheckout({
+                sessionId,
+              });
+              console.error(error);
+            }
+
+            // webhooks
+            const webhookUrl = process.env.WEBHOOK_URL;
+            if (typeof webhookUrl === "string") {
+              const res = await fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userName: formData.name,
+                }),
+              });
+
+              if (!res.ok) {
+                const errorText = await res.text(); // エラーの詳細を取得
+                console.error(
+                  `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+                );
+                throw new Error("サーバーからの応答が正常ではありません。");
+              }
+            }
           }
+
+          setLoading(false);
+          form.reset();
+          // toast はsuccessPageに移動
         } catch (error: any) {
           setLoading(false);
           form.reset();
