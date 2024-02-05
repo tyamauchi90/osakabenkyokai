@@ -20,7 +20,7 @@ import { useToast } from "@/app/components/shadcn/ui/use-toast";
 import getStripe from "@/app/stripe/stripe";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../../components/shadcn/ui/button";
@@ -53,8 +53,32 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
     },
   });
 
-  // useEffect(() => {
-  // }, [userId, userName]);
+  useEffect(() => {
+    const fetchCheckoutSession = async () => {
+      try {
+        const res = await fetch("/api/checkoutsessions", {
+          method: "POST",
+          body: JSON.stringify({
+            postId: id,
+            userId,
+          }),
+        });
+
+        if (!res.ok) {
+          console.error("API Error:", res.statusText);
+          return;
+        }
+
+        const data = await res.json(); // JSONデータに変換
+        setSessionId(data.sessionId);
+      } catch (error: any) {
+        console.error("Fetch Error:", error.message);
+      }
+    };
+    if (userId) {
+      fetchCheckoutSession();
+    }
+  }, [userId]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
@@ -102,62 +126,39 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             }
           }
 
-          if (userId && formData.name) {
-            const fetchCheckoutSession = async (userName: string) => {
-              try {
-                const res = await fetch("/api/checkoutsessions", {
-                  method: "POST",
-                  body: JSON.stringify({
-                    postId: id,
-                    userId,
-                    userName,
-                  }),
-                });
-
-                if (!res.ok) {
-                  console.error("API Error:", res.statusText);
-                  return;
-                }
-
-                const data = await res.json(); // JSONデータに変換
-                setSessionId(data.sessionId);
-              } catch (error: any) {
-                console.error("Fetch Error:", error.message);
-              }
-            };
-            await fetchCheckoutSession(formData.name);
-
-            const stripe = await getStripe();
-            if (stripe !== null && sessionId !== null) {
-              const { error } = await stripe.redirectToCheckout({
-                sessionId,
-              });
-              console.error(error);
-            }
-
-            // webhooks
-            const webhookUrl = process.env.WEBHOOK_URL;
-            if (typeof webhookUrl === "string") {
-              const res = await fetch(webhookUrl, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              });
-
-              if (!res.ok) {
-                const errorText = await res.text(); // エラーの詳細を取得
-                console.error(
-                  `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-                );
-                throw new Error("サーバーからの応答が正常ではありません。");
-              }
-            }
-
-            setLoading(false);
-            form.reset();
-            // toast はsuccessPageに移動
+          const stripe = await getStripe();
+          if (stripe !== null && sessionId !== null) {
+            const { error } = await stripe.redirectToCheckout({
+              sessionId,
+            });
+            console.error(error);
           }
+
+          // webhooks
+          const webhookUrl = process.env.WEBHOOK_URL;
+          if (typeof webhookUrl === "string") {
+            const res = await fetch(webhookUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userName: formData.name,
+              }),
+            });
+
+            if (!res.ok) {
+              const errorText = await res.text(); // エラーの詳細を取得
+              console.error(
+                `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+              );
+              throw new Error("サーバーからの応答が正常ではありません。");
+            }
+          }
+
+          setLoading(false);
+          form.reset();
+          // toast はsuccessPageに移動
         } catch (error: any) {
           setLoading(false);
           form.reset();
