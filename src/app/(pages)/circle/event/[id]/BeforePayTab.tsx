@@ -112,30 +112,30 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             throw new Error("サーバーからの応答が正常ではありません。");
           }
 
-          // overwriteの条件分岐
-          const _result = await _res.json();
-          // const existingApplicationDocData = _result.existingApplicationDocData;
-          let overwrite = false;
-          if (_result.exists) {
-            overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
-            if (!overwrite) {
-              form.reset();
-              setLoading(false);
-              router.push(`/circle/event/${id}/`);
-              return;
-            }
-          }
-
-          const stripe = await getStripe();
-          if (stripe !== null && sessionId !== null) {
-            const { error } = await stripe.redirectToCheckout({
-              sessionId,
-            });
-            console.error(error);
-          }
-
-          // webhooks
           if (formData.name) {
+            // overwriteの条件分岐
+            const _result = await _res.json();
+            // const existingApplicationDocData = _result.existingApplicationDocData;
+            let overwrite = false;
+            if (_result.exists) {
+              overwrite = confirm("すでに予約されています。上書きしますか？"); // ToDo:alert Dialogの使用を検討
+              if (!overwrite) {
+                form.reset();
+                setLoading(false);
+                router.push(`/circle/event/${id}/`);
+                return;
+              }
+            }
+
+            const stripe = await getStripe();
+            if (stripe !== null && sessionId !== null) {
+              const { error } = await stripe.redirectToCheckout({
+                sessionId,
+              });
+              console.error(error);
+            }
+
+            // webhooks
             const webhookUrl = process.env.WEBHOOK_URL;
             if (typeof webhookUrl === "string") {
               const res = await fetch(webhookUrl, {
