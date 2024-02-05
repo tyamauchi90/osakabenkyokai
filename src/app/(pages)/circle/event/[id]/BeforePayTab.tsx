@@ -75,7 +75,6 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         console.error("Fetch Error:", error.message);
       }
     };
-    console.log(id, userId);
     if (id && userId) {
       fetchCheckoutSession();
     }
@@ -136,24 +135,26 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
           }
 
           // webhooks
-          const webhookUrl = process.env.WEBHOOK_URL;
-          if (typeof webhookUrl === "string") {
-            const res = await fetch(webhookUrl, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                userName: formData.name,
-              }),
-            });
+          if (formData.name) {
+            const webhookUrl = process.env.WEBHOOK_URL;
+            if (typeof webhookUrl === "string") {
+              const res = await fetch(webhookUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userName: formData.name,
+                }),
+              });
 
-            if (!res.ok) {
-              const errorText = await res.text(); // エラーの詳細を取得
-              console.error(
-                `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
-              );
-              throw new Error("サーバーからの応答が正常ではありません。");
+              if (!res.ok) {
+                const errorText = await res.text(); // エラーの詳細を取得
+                console.error(
+                  `サーバーからの応答が正常ではありません。エラー内容: ${errorText}`
+                );
+                throw new Error("サーバーからの応答が正常ではありません。");
+              }
             }
           }
 
