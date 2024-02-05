@@ -75,10 +75,11 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
         console.error("Fetch Error:", error.message);
       }
     };
-    if (userId) {
+    console.log(id, userId);
+    if (id && userId) {
       fetchCheckoutSession();
     }
-  }, [userId]);
+  }, [id, userId]);
 
   const onSubmit: SubmitHandler<FormValueType> = async (
     values: z.infer<typeof formSchema>
