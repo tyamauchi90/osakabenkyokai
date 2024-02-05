@@ -51,7 +51,7 @@ export const stripePaymentSucceeded = functions.https.onRequest(
           const userName = req.body.userName;
 
           if (!postId || !userId || !userName) {
-            throw new Error("Requered data is missing");
+            throw new Error("Required data is missing");
           }
 
           const postRef = admin.firestore().doc(`posts/${postId}`);
