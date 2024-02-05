@@ -49,7 +49,6 @@ export const stripePaymentSucceeded = functions.https.onRequest(
           const postId = paymentIntent.metadata?.postId;
           const userId = paymentIntent.metadata?.userId;
           const userName = req.body.userName;
-          console.log(postId, userId, userName);
 
           if (!postId || !userId || !userName) {
             throw new Error("Required data is missing");
