@@ -91,7 +91,7 @@ const BeforePayTab: FC<IdType> = ({ id }) => {
             }
           };
           if (id && userId && formData.name) {
-            fetchCheckoutSession();
+            await fetchCheckoutSession();
 
             // 予約データが存在するかチェック
             const _res = await fetch(`/circle/event/api/${id}/findUserId`, {
