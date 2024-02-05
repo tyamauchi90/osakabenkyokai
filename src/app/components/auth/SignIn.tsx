@@ -79,7 +79,6 @@ const SignIn = () => {
       );
 
       const user = result.user;
-      console.log(user);
       if (!user) {
         throw new Error("ユーザーIDを取得できません");
       }
