@@ -48,14 +48,14 @@ const FeatureCard: React.FC<FeatureCardType> = ({
         <dt className="pb-6">
           <motion.span
             ref={ref}
-            className="inline-block text-7xl font-medium text-customYellow tracking-[-0.05em]"
+            className="inline-block text-6xl font-medium text-customYellow tracking-[-0.05em]"
             initial="hidden"
             animate={controls}
             variants={numVariants}
           >
             {num}
           </motion.span>
-          <span className="pl-6">{unit}</span>
+          <span className="pl-5">{unit}</span>
         </dt>
         <dd className="text-center leading-loose">
           <p className="text-3xl tracking-widest mb-4">{title}</p>
