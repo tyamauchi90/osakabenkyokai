@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['scontent-itm1-1.xx.fbcdn.net', 'scontent-iad3-1.xx.fbcdn.net', 'scontent-iad3-2.xx.fbcdn.net'],// Facebook
+    domains: ['scontent-fitm1-1.xx.fbcdn.net', 'scontent-iad3-1.xx.fbcdn.net', 'scontent-iad3-2.xx.fbcdn.net'],// Facebook
   },
   async headers() {
     return [
