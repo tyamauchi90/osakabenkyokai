@@ -9,12 +9,7 @@ export async function GET(
 	try {
 		const accessToken = process.env.NEXT_PUBLIC_FACEBOOK_ACCESS_TOKEN;
 		const pageId = process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID;
-		const now = new Date();
-		const twoYearsAgo = new Date(now.getFullYear() - 2, now.getMonth(), now.getDate());
-		const apiEndpoint = `https://graph.facebook.com/v19.0/${pageId}/feed?fields=message,created_time,full_picture,attachments{media,subattachments,image,src}&since=${Math.floor(
-			twoYearsAgo.getTime() / 1000
-		)}`;
-		// const apiEndpoint = `https://graph.facebook.com/v19.0/${pageId}/feed?fields=message,created_time,full_picture,attachments{media,subattachments,image,src}`;
+		const apiEndpoint = `https://graph.facebook.com/v19.0/${pageId}/feed?fields=message,created_time,full_picture,attachments{media,subattachments,image,src}`;
 		let allPosts: FacebookPostType[] = [];
 		let next = apiEndpoint;
 
