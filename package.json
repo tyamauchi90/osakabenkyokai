@@ -91,6 +91,6 @@
     "undici": "5.28.4"
   },
   "optionalDependencies": {
-    "@next/swc-linux-x64-gnu": "^16.1.6"
+    "@next/swc-linux-x64-gnu": "13.5.11"
   }
 }
