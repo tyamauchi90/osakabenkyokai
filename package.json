@@ -89,5 +89,8 @@
   },
   "overrides": {
     "undici": "5.28.4"
+  },
+  "optionalDependencies": {
+    "@next/swc-linux-x64-gnu": "^16.1.6"
   }
 }
